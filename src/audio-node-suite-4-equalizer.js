@@ -42,7 +42,7 @@ export class AudioNodeEqualizer {
             const options = Object.assign({}, {
                 type: "peaking",
                 freq: 64 * Math.pow(2, i),
-                q:    1,
+                q:    1.0,
                 gain: 1.0
             }, params.bands[i])
 

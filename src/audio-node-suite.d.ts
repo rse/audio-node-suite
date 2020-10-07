@@ -85,17 +85,32 @@ declare module "AudioNodeSuite" {
         )
     }
 
-    /*  standard `AudioNode` for convenient multi-band parameteric equalizer.  */
-    export class AudioNodeEqualizer extends AudioNode {
+    /*  standard `AudioNode` for multi-band parameteric equalizer.  */
+    export class AudioNodeEqualizer extends AudioNodeComposite {
         public constructor(
             context: AudioContext,   /*  context to associate  */
             params?: {
                 bands: {
-                    type:  string,   /*  threshold in decibel to compress above (default: -3.0),  */
-                    freq:  number,   /*  time in seconds to attack/clamp-up volume (default: 0.003)  */
-                    q:     number,   /*  time in seconds to release/clamp-down volume (default: 0.050)  */
-                    gain?: number    /*  smoothing "knee" in decibels at threshold (default: 0.0)  */
+                    type:  string,   /*  type of Biquad filter (default: "peaking"),  */
+                    freq:  number,   /*  base frequency to act on (default: 64*2^i)  */
+                    q:     number,   /*  Q factor to apply (default: 1.0)  */
+                    gain?: number    /*  gain to apply (default: 1.0)  */
                 }[]
+            }
+        )
+    }
+
+    /*  standard `AudioNode` for meter measuring the volume.  */
+    export class AudioNodeEqualizer extends AudioNode {
+        public constructor(
+            context: AudioContext,   /*  context to associate  */
+            params?: {
+                fftSize:               number, /*  FFT size (default: 2048)  */
+                minDecibels:           number, /*  FFT minimum decibels (default: -100)  */
+                maxDecibels:           number, /*  FFT maximum decibels (default: 0)  */
+                smoothingTimeConstant: number, /*  FFT smoothing time constant (default: 0.8)  */
+                intervalTime:          number, /*  interval time in milliseconds to act (default: 1000 / 120)  */
+                intervalLength:        number, /*  interval length for average calculations (default: 100)  */
             }
         )
     }
