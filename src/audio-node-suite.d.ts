@@ -94,7 +94,7 @@ declare module "AudioNodeSuite" {
                     type:  string,   /*  threshold in decibel to compress above (default: -3.0),  */
                     freq:  number,   /*  time in seconds to attack/clamp-up volume (default: 0.003)  */
                     q:     number,   /*  time in seconds to release/clamp-down volume (default: 0.050)  */
-                    gain:  number    /*  smoothing "knee" in decibels at threshold (default: 0.0)  */
+                    gain?: number    /*  smoothing "knee" in decibels at threshold (default: 0.0)  */
                 }[]
             }
         )
