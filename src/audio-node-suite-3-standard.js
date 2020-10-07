@@ -30,12 +30,12 @@ export class AudioNodeGain {
     constructor (context, params = {}) {
         /*  provide parameter defaults  */
         params = Object.assign({}, {
-            db: 0
+            gain: 0
         }, params)
 
         /*  create and configure underlying Gain node  */
         const gain = context.createGain()
-        gain.gain.setValueAtTime(dBFSToGain(params.db), context.currentTime)
+        gain.gain.setValueAtTime(dBFSToGain(params.gain), context.currentTime)
         return gain
     }
 }

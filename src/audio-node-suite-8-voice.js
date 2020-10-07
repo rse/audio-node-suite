@@ -43,7 +43,7 @@ export class AudioNodeVoiceFilter {
     constructor (context, params = {}) {
         /*  provide parameter defaults  */
         params = Object.assign({}, {
-            /*  NONE  */
+            gain: 0.0
         }, params)
 
         /*  1. create: cutting equalizer  */
@@ -86,7 +86,7 @@ export class AudioNodeVoiceFilter {
 
         /*  5. create: gain compensator  */
         const gain = new AudioNodeGain(context, {
-            db: -6.0
+            gain: -6.0 + params.gain
         })
 
         /*  6. create: limiter  */
