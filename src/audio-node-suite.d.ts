@@ -36,7 +36,7 @@ declare module "AudioNodeSuite" {
         calls, it emits: `CustomEvent("bypass-enable-before")`,
         `CustomEvent("bypass-enable-after")`, `CustomEvent("bypass-disable-before")`,
         or `CustomEvent("bypass-disable-after")`.  */
-    class AudioNodeComposite extends AudioNode {
+    export class AudioNodeComposite extends AudioNode {
         public constructor(
             input:   AudioNode,      /*  input  node to wrap  */
             output?: AudioNode       /*  output node to wrap  */
@@ -47,7 +47,7 @@ declare module "AudioNodeSuite" {
     }
 
     /*  standard `AudioNode` for convenient Gain control.  */
-    class AudioNodeGain extends AudioNode {
+    export class AudioNodeGain extends AudioNode {
         public constructor(
             context: AudioContext,   /*  context to associate  */
             params?: {
@@ -57,7 +57,7 @@ declare module "AudioNodeSuite" {
     }
 
     /*  standard `AudioNode` for convenient Compressor effect.  */
-    class AudioNodeCompressor extends AudioNode {
+    export class AudioNodeCompressor extends AudioNode {
         public constructor(
             context: AudioContext,   /*  context to associate  */
             params?: {
@@ -72,7 +72,7 @@ declare module "AudioNodeSuite" {
 
     /*  standard `AudioNode` for convenient Limiter effect.
         (effectively, a maximum Compressor near the clipping zone)  */
-    class AudioNodeLimiter extends AudioNode {
+    export class AudioNodeLimiter extends AudioNode {
         public constructor(
             context: AudioContext,   /*  context to associate  */
             params?: {
@@ -85,12 +85,19 @@ declare module "AudioNodeSuite" {
         )
     }
 
-    /*  the exported API  */
-    export = {
-        AudioNodeComposite,
-        AudioNodeGain,
-        AudioNodeCompressor,
-        AudioNodeLimiter
+    /*  standard `AudioNode` for convenient multi-band parameteric equalizer.  */
+    export class AudioNodeEqualizer extends AudioNode {
+        public constructor(
+            context: AudioContext,   /*  context to associate  */
+            params?: {
+                bands: {
+                    type:  string,   /*  threshold in decibel to compress above (default: -3.0),  */
+                    freq:  number,   /*  time in seconds to attack/clamp-up volume (default: 0.003)  */
+                    q:     number,   /*  time in seconds to release/clamp-down volume (default: 0.050)  */
+                    gain:  number    /*  smoothing "knee" in decibels at threshold (default: 0.0)  */
+                }[]
+            }
+        )
     }
 }
 

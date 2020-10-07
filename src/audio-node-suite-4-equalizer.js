@@ -30,7 +30,7 @@ export class AudioNodeEqualizer {
     constructor (context, params = {}) {
         /*  provide parameter defaults  */
         params = Object.assign({}, {
-            bands: [ { type: "peaking", freq: 64, q: 1, gain: 1.0 } ]
+            bands: []
         }, params)
 
         /*  interate over all bands  */
