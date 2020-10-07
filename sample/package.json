@@ -1,0 +1,20 @@
+{
+    "name":                        "sample",
+    "description":                 "sample",
+    "version":                     "0.0.0",
+    "author": {
+        "name":                    "Dr. Ralf S. Engelschall",
+        "email":                   "rse@engelschall.com",
+        "url":                     "http://engelschall.com"
+    },
+    "license":                     "MIT",
+    "main":                        "package.json",
+    "devDependencies": {
+        "serve":                   "11.3.2"
+    },
+    "dependencies": {
+        "vue":                     "2.6.12",
+        "http-vue-loader":         "1.4.2",
+        "audio-node-suite":        ".."
+    }
+}

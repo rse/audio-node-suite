@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Sample</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script type="text/javascript" src="node_modules/vue/dist/vue.min.js"></script>
+        <script type="text/javascript" src="node_modules/http-vue-loader/src/httpVueLoader.js"></script>
+        <script type="text/javascript" src="node_modules/audio-node-suite/lib/audio-node-suite.browser.js"></script>
+    </head>
+    <body>
+        <div id="sample">
+            <sample></sample>
+        </div>
+        <style type="text/css">
+            html { margin: 0; padding: 0; }
+            body { margin: 0; padding: 0; width: 100vw; height: 100vh; position: relative; }
+        </style>
+        <script>
+            Vue.use(httpVueLoader)
+            vm = new Vue({ el: "#sample", components: { "sample": "url:sample.vue" }})
+        </script>
+    </body>
+</html>
