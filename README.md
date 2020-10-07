@@ -20,11 +20,14 @@ $ npm install audio-node
 About
 -----
 
-**Audio-Node-Suite** is a JavaScript library for use in the Browser (through its
-regular Web Audio API) and Node.js (through its Web Audio API emulating
+**Audio-Node-Suite** is a JavaScript library for use in the Browser
+(through its regular [Web Audio API](https://www.w3.org/TR/webaudio/))
+and Node.js (through its Web Audio API emulating
 [web-audio-api](https://github.com/audiojs/web-audio-api) or
-[web-audio-engine](https://github.com/mohayonao/web-audio-engine) modules),
-which provides a suite of Web Audio API compatible `AudioNode` classes:
+[web-audio-engine](https://github.com/mohayonao/web-audio-engine)
+modules), which provides a suite of Web Audio API compatible
+[`AudioNode`](https://developer.mozilla.org/en-US/docs/Web/API/AudioNode)
+classes:
 
 - `AudioNodeComposite`: this is a convenient class for creating
   a custom composite/wrapping `AudioNode` class. It is used internally
@@ -34,31 +37,35 @@ which provides a suite of Web Audio API compatible `AudioNode` classes:
   underlying `AudioNode` instances.
 
 - `AudioNodeGain`, `AudioNodeCompressor`, `AudioNodeLimiter`: these
-  are just convenient wrappers for the regular functionality provides
+  are just convenient wrappers for the regular functionality provided
   by the Web Audio API `GainNode` and `DynamicsCompressorNode` classes,
-  providing the `bypass()` functionality and useful parameter defaults.
+  providing the `bypass()` functionality and some opinionated parameter defaults.
 
-- `AudioNodeEqualizer`: this is based on Web Audio API `BiquadFilterNode`
-  instances and provides a convenient multi-band parametric equalizer `AudioNode`.
+- `AudioNodeEqualizer`: this is based on the Web Audio API `BiquadFilterNode`
+  class and provides a convenient multi-band parametric equalizer `AudioNode`.
 
-- `AudioNodeMeter`: this is based on a Web Audio API `AnalyzerNode` 
-  instance and measures the volume in decibel of the audio stream in various ways.
+- `AudioNodeMeter`: this is based on the Web Audio API `AnalyzerNode`
+  class and continuously tracks and measures the overall volume in
+  decibel of the audio stream. It is also the internal base building
+  block for the `AudioNodeGate` and `AudioNodeSpectrum` classes.
 
-- `AudioNodeGate`: this is based on a Web Audio API `GainNode` 
-  instance and measures the volume in decibel of the audio stream and
+- `AudioNodeGate`: this is based on the Web Audio API `GainNode`
+  class and measures the volume in decibel of the audio stream and
   drains the volume if it drops below a certain decibel threshold. It is
   intended to act as a Noise Gate.
 
 - `AudioNodeSpectrum`: this is based on `AudioNodeMeter` and
-  hence a Web Audio API `AnalyzerNode` instance to analyze the
+  hence the Web Audio API `AnalyzerNode` class to analyze the
   frequency/decibel spectrum of the audio stream and continuously render
-  it in a logarithmic scale to a `Canvas` DOM element.
+  it in a (linear or logarithmic) scale to a `Canvas` element in the
+  DOM.
 
 - `AudioNodeVoice`: this is based on `AudioNodeEqualizer`,
   `AudioNodeGate`, `AudioNodeCompressor`, `AudioNodeGain` and
   `AudioNodeLimiter` to provide a convenient single `AudioNode`
   which acts as a reasonable filter chain for voice. Its opinionated
-  parameters are hard-coded and just based on some experiences.
+  parameters are intentionally hard-coded and are just based on some
+  experiences of the author.
 
 Usage
 -----
