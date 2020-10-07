@@ -1,6 +1,6 @@
 {
     "name":                       "audio-node-suite",
-    "version":                    "0.9.0",
+    "version":                    "0.9.1",
     "description":                "Audio-Node-Suite -- Web Audio API AudioNode Suite",
     "keywords":                   [ "web", "audio", "api", "audionode", "suite" ],
     "browser":                    "lib/audio-node-suite.browser.js",
