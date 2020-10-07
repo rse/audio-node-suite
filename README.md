@@ -20,7 +20,10 @@ $ npm install audio-node
 About
 -----
 
-Audio-Node-Suite is a JavaScript library for use in the Browser and Node.js,
+**Audio-Node-Suite** is a JavaScript library for use in the Browser (through its
+regular Web Audio API) and Node.js (through its Web Audio API emulating
+[web-audio-api](https://github.com/audiojs/web-audio-api) or
+[web-audio-engine](https://github.com/mohayonao/web-audio-engine) modules),
 which provides a suite of Web Audio API compatible `AudioNode` classes:
 
 - `AudioNodeComposite`: this is a convenient class for creating
@@ -60,8 +63,8 @@ which provides a suite of Web Audio API compatible `AudioNode` classes:
 Usage
 -----
 
-See the [TypeScript definition file](src/audio-node-suite.d.ts)
-for details on the exposed Application Programming Interface (API).
+See the [TypeScript definition](src/audio-node-suite.d.ts)
+for details on the provided Application Programming Interface (API).
 
 Implementation Notice
 ---------------------
