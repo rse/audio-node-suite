@@ -57,6 +57,12 @@ which provides a suite of Web Audio API compatible `AudioNode` classes:
   which acts as a reasonable filter chain for voice. Its opinionated
   parameters are hard-coded and just based on some experiences.
 
+Usage
+-----
+
+See the [TypeScript definition file](src/audio-node-suite.d.ts)
+for details on the exposed Application Programming Interface (API).
+
 Implementation Notice
 ---------------------
 
