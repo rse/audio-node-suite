@@ -51,7 +51,7 @@ declare module "AudioNodeSuite" {
         public constructor(
             context: AudioContext,   /*  context to associate  */
             params?: {
-                db: number           /*  decibel to change the gain (default: 0)  */
+                gain: number         /*  decibel to change the gain (default: 0)  */
             }
         )
     }
@@ -159,6 +159,7 @@ declare module "AudioNodeSuite" {
         public constructor(
             context: AudioContext,   /*  context to associate  */
             params?: {
+                gain: number         /*  additional decibel to change the gain after processing (default: 0)  */
             }
         )
     }
