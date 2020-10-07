@@ -10,13 +10,6 @@ Web Audio API `AudioNode` Suite
 <p/>
 <img src="https://david-dm.org/rse/audio-node-suite.png" alt=""/>
 
-Installation
-------------
-
-```shell
-$ npm install audio-node
-```
-
 About
 -----
 
@@ -66,6 +59,13 @@ classes:
   which acts as a reasonable filter chain for voice. Its opinionated
   parameters are intentionally hard-coded and are just based on some
   experiences of the author.
+
+Installation
+------------
+
+```shell
+$ npm install audio-node-suite
+```
 
 Usage
 -----
