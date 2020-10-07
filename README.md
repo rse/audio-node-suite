@@ -13,8 +13,8 @@ Web Audio API `AudioNode` Suite
 About
 -----
 
-**Audio-Node-Suite** is a JavaScript library for use in the Browser
-(through its regular [Web Audio API](https://www.w3.org/TR/webaudio/)),
+**Audio-Node-Suite** is a JavaScript library, for use in the Browser
+with the [Web Audio API](https://www.w3.org/TR/webaudio/),
 which provides a suite of Web Audio API compatible
 [`AudioNode`](https://developer.mozilla.org/en-US/docs/Web/API/AudioNode)
 classes:
