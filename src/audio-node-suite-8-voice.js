@@ -39,7 +39,7 @@ import {
 } from "./audio-node-suite-6-gate.js"
 
 /*  custom AudioNode: voice filter  */
-export class AudioNodeVoiceFilter {
+export class AudioNodeVoice {
     constructor (context, params = {}) {
         /*  provide parameter defaults  */
         params = Object.assign({}, {
