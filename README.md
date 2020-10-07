@@ -76,7 +76,7 @@ for details on the provided Application Programming Interface (API).
 Implementation Notice
 ---------------------
 
-Although Audio-Node-Suite is written in ECMAScript 2020, it is transpiled to older
+Although **Audio-Node-Suite** is written in ECMAScript 2020, it is transpiled to older
 environments and this way runs in really all current (as of 2020)
 JavaScript environments, of course.
 
