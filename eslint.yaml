@@ -1,5 +1,5 @@
 ##
-##  Audio-Node -- Web Audio API AudioNode Suite
+##  Audio-Node-Suite -- Web Audio API AudioNode Suite
 ##  Copyright (c) 2020 Dr. Ralf S. Engelschall <rse@engelschall.com>
 ##
 ##  Permission is hereby granted, free of charge, to any person obtaining

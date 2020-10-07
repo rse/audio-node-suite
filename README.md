@@ -1,14 +1,14 @@
 
-Audio-Node
-==========
+Audio-Node-Suite
+================
 
-Web Audio API AudioNode Suite
-
-<p/>
-<img src="https://nodei.co/npm/audio-node.png?downloads=true&stars=true" alt=""/>
+Web Audio API `AudioNode` Suite
 
 <p/>
-<img src="https://david-dm.org/rse/audio-node.png" alt=""/>
+<img src="https://nodei.co/npm/audio-node-suite.png?downloads=true&stars=true" alt=""/>
+
+<p/>
+<img src="https://david-dm.org/rse/audio-node-suite.png" alt=""/>
 
 Installation
 ------------
@@ -20,7 +20,7 @@ $ npm install audio-node
 About
 -----
 
-Audio-Node is a JavaScript library for use in the Browser and Node.js,
+Audio-Node-Suite is a JavaScript library for use in the Browser and Node.js,
 which provides a suite of Web Audio API compatible `AudioNode` classes:
 
 - `AudioNodeComposite`: this is a convenient class for creating
@@ -60,13 +60,13 @@ which provides a suite of Web Audio API compatible `AudioNode` classes:
 Implementation Notice
 ---------------------
 
-Although Audio-Node is written in ECMAScript 2020, it is transpiled to older
+Although Audio-Node-Suite is written in ECMAScript 2020, it is transpiled to older
 environments and this way runs in really all current (as of 2020)
 JavaScript environments, of course.
 
 Additionally, there are two transpilation results: first, there is a
-compressed `audio-node.browser.js` for Browser environments. Second, there is
-an uncompressed `audio-node.node.js` for Node.js environments.
+compressed `audio-node-suite.browser.js` for Browser environments. Second, there is
+an uncompressed `audio-node-suite.node.js` for Node.js environments.
 
 License
 -------

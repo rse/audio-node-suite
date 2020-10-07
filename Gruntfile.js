@@ -1,5 +1,5 @@
 /*
-**  Audio-Node -- Web Audio API AudioNode Suite
+**  Audio-Node-Suite -- Web Audio API AudioNode Suite
 **  Copyright (c) 2020 Dr. Ralf S. Engelschall <rse@engelschall.com>
 **
 **  Permission is hereby granted, free of charge, to any person obtaining
@@ -32,12 +32,12 @@ module.exports = function (grunt) {
             options: {
                 configFile: "eslint.yaml"
             },
-            "audio-node": [ "src/**/*.js" ]
+            "audio-node-suite": [ "src/**/*.js" ]
         },
         browserify: {
-            "audio-node-browser": {
+            "audio-node-suite-browser": {
                 files: {
-                    "lib/audio-node.browser.js": [ "src/**/*.js" ]
+                    "lib/audio-node-suite.browser.js": [ "src/**/*.js" ]
                 },
                 options: {
                     transform: [
@@ -57,14 +57,14 @@ module.exports = function (grunt) {
                         [ "browserify-header" ]
                     ],
                     browserifyOptions: {
-                        standalone: "AudioNode",
+                        standalone: "AudioNodeSuite",
                         debug: false
                     }
                 }
             },
-            "audio-node-node": {
+            "audio-node-suite-node": {
                 files: {
-                    "lib/audio-node.node.js": [ "src/**/*.js" ]
+                    "lib/audio-node-suite.node.js": [ "src/**/*.js" ]
                 },
                 options: {
                     transform: [
@@ -83,7 +83,7 @@ module.exports = function (grunt) {
                         [ "browserify-header" ]
                     ],
                     browserifyOptions: {
-                        standalone: "AudioNode",
+                        standalone: "AudioNodeSuite",
                         debug: false
                     }
                 }

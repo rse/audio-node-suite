@@ -1,5 +1,5 @@
 /*
-**  Audio-Node -- Web Audio API AudioNode Suite
+**  Audio-Node-Suite -- Web Audio API AudioNode Suite
 **  Copyright (c) 2020 Dr. Ralf S. Engelschall <rse@engelschall.com>
 **
 **  Permission is hereby granted, free of charge, to any person obtaining
@@ -23,9 +23,9 @@
 */
 
 /*  internal requirements  */
-import { dBFSToGain }         from "./audio-node-1-util.js"
-import { AudioNodeComposite } from "./audio-node-2-composite.js"
-import { AudioNodeMeter }     from "./audio-node-5-meter.js"
+import { dBFSToGain }         from "./audio-node-suite-1-util.js"
+import { AudioNodeComposite } from "./audio-node-suite-2-composite.js"
+import { AudioNodeMeter }     from "./audio-node-suite-5-meter.js"
 
 /*  custom AudioNode: (noise) gate  */
 export class AudioNodeGate {

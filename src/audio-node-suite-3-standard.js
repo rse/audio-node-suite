@@ -1,5 +1,5 @@
 /*
-**  Audio-Node -- Web Audio API AudioNode Suite
+**  Audio-Node-Suite -- Web Audio API AudioNode Suite
 **  Copyright (c) 2020 Dr. Ralf S. Engelschall <rse@engelschall.com>
 **
 **  Permission is hereby granted, free of charge, to any person obtaining
@@ -23,7 +23,7 @@
 */
 
 /*  internal requirements  */
-import { dBFSToGain } from "./audio-node-1-util.js"
+import { dBFSToGain } from "./audio-node-suite-1-util.js"
 
 /*  custom AudioNode: gain  */
 export class AudioNodeGain {

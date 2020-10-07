@@ -1,5 +1,5 @@
 /*
-**  Audio-Node -- Web Audio API AudioNode Suite
+**  Audio-Node-Suite -- Web Audio API AudioNode Suite
 **  Copyright (c) 2020 Dr. Ralf S. Engelschall <rse@engelschall.com>
 **
 **  Permission is hereby granted, free of charge, to any person obtaining
@@ -25,27 +25,27 @@
 /*  import all internally exported classes  */
 import {
     AudioNodeComposite
-} from "./audio-node-2-composite.js"
+} from "./audio-node-suite-2-composite.js"
 import {
     AudioNodeGain,
     AudioNodeCompressor,
     AudioNodeLimiter
-} from "./audio-node-3-standard.js"
+} from "./audio-node-suite-3-standard.js"
 import {
     AudioNodeEqualizer
-} from "./audio-node-4-equalizer.js"
+} from "./audio-node-suite-4-equalizer.js"
 import {
     AudioNodeMeter
-} from "./audio-node-5-meter.js"
+} from "./audio-node-suite-5-meter.js"
 import {
     AudioNodeGate
-} from "./audio-node-6-gate.js"
+} from "./audio-node-suite-6-gate.js"
 import {
     AudioNodeSpectrum
-} from "./audio-node-7-spectrum.js"
+} from "./audio-node-suite-7-spectrum.js"
 import {
     AudioNodeVoice
-} from "./audio-node-8-voice.js"
+} from "./audio-node-suite-8-voice.js"
 
 /*  export the traditional way for interoperability reasons
     (as Babel would export an object with a 'default' field)  */

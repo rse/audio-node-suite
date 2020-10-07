@@ -1,5 +1,5 @@
 /*
-**  Audio-Node -- Web Audio API AudioNode Suite
+**  Audio-Node-Suite -- Web Audio API AudioNode Suite
 **  Copyright (c) 2020 Dr. Ralf S. Engelschall <rse@engelschall.com>
 **
 **  Permission is hereby granted, free of charge, to any person obtaining
@@ -23,7 +23,7 @@
 */
 
 /*  internal requirements  */
-import { AudioNodeComposite } from "./audio-node-2-composite.js"
+import { AudioNodeComposite } from "./audio-node-suite-2-composite.js"
 
 /*  custom AudioNode: parametric equalizer  */
 export class AudioNodeEqualizer {

@@ -1,5 +1,5 @@
 /*
-**  Audio-Node -- Web Audio API AudioNode Suite
+**  Audio-Node-Suite -- Web Audio API AudioNode Suite
 **  Copyright (c) 2020 Dr. Ralf S. Engelschall <rse@engelschall.com>
 **
 **  Permission is hereby granted, free of charge, to any person obtaining
@@ -25,18 +25,18 @@
 /*  internal requirements  */
 import {
     AudioNodeComposite
-} from "./audio-node-2-composite.js"
+} from "./audio-node-suite-2-composite.js"
 import {
     AudioNodeGain,
     AudioNodeCompressor,
     AudioNodeLimiter
-} from "./audio-node-3-standard.js"
+} from "./audio-node-suite-3-standard.js"
 import {
     AudioNodeEqualizer
-} from "./audio-node-4-equalizer.js"
+} from "./audio-node-suite-4-equalizer.js"
 import {
     AudioNodeGate
-} from "./audio-node-6-gate.js"
+} from "./audio-node-suite-6-gate.js"
 
 /*  custom AudioNode: voice filter  */
 export class AudioNodeVoiceFilter {
