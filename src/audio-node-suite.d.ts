@@ -100,8 +100,8 @@ declare module "AudioNodeSuite" {
         )
     }
 
-    /*  standard `AudioNode` for meter measuring the volume.  */
-    export class AudioNodeEqualizer extends AudioNode {
+    /*  standard `AudioNode` for meter, measuring the volume.  */
+    export class AudioNodeMeter extends AudioNode {
         public constructor(
             context: AudioContext,   /*  context to associate  */
             params?: {
@@ -110,7 +110,55 @@ declare module "AudioNodeSuite" {
                 maxDecibels:           number, /*  FFT maximum decibels (default: 0)  */
                 smoothingTimeConstant: number, /*  FFT smoothing time constant (default: 0.8)  */
                 intervalTime:          number, /*  interval time in milliseconds to act (default: 1000 / 120)  */
-                intervalLength:        number, /*  interval length for average calculations (default: 100)  */
+                intervalLength:        number  /*  interval length for average calculations (default: 100)  */
+            }
+        )
+    }
+
+    /*  standard `AudioNode` for noise gate.  */
+    export class AudioNodeMeter extends AudioNodeComposite {
+        public constructor(
+            context: AudioContext,   /*  context to associate  */
+            params?: {
+                threshold:  number,  /* open above threshold (dbFS) (default: -50)  */
+                hysteresis: number,  /* close below threshold+hysteresis (dbFS) (default: -6)  */
+                reduction:  number,  /* reduction of volume gain (dbFS) (default: -50)  */
+                interval:   number,  /* tracking interval (ms) (default: 2)  */
+                attack:     number,  /* time to attack/clamp-up volume (ms) (default: 4) */
+                hold:       number,  /* time to hold volume after it dropped below threshold+hysteresis (ms) (default: 40)  */
+                release:    number   /* time to release/clamp-down volume (ms) (default: 20)  */
+            }
+        )
+    }
+
+    /*  standard `AudioNode` for spectrum visualization.  */
+    export class AudioNodeSpectrum extends AudioNode {
+        public constructor(
+            context: AudioContext,   /*  context to associate  */
+            params?: {
+                fftSize:               number,   /*  FFT size (default: 2048)  */
+                minDecibels:           number,   /*  FFT minimum decibels (default: -100)  */
+                maxDecibels:           number,   /*  FFT maximum decibels (default: 0)  */
+                smoothingTimeConstant: number,   /*  FFT smoothing time constant (default: 0.8)  */
+                intervalTime:          number,   /*  interval time in milliseconds to act (default: 1000 / 60)  */
+                intervalLength:        number    /*  interval length for average calculations (default: 10)  */
+                layers:                number[], /*  list of decibel layers to draw (default: [ -120, -90, -60, -30 ])  */
+                slices:                number[], /*  list of frequency slices to draw (default: [ 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240, 20480 ])  */
+                colorBackground:       string,   /*  color of the background (default: "#000000")  */
+                colorBars:             string,   /*  color of the spectrum bars (default: "#00cc00")  */
+                colorAvg:              string,   /*  color of the average maximum decibel (default: "#00ff00")  */
+                colorLayers:           string,   /*  color of the decibel layer lines (default: "#009900")  */
+                colorSlices:           string,   /*  color of the frequency slice lines (default: "#009900")  */
+                logarithmic:           boolean   /*  whether to use logarithmic scale for frequencies (default: true)  */
+            }
+        )
+    }
+
+    /*  standard `AudioNode` for opinionated voice filtering.  */
+    export class AudioNodeVoice extends AudioNodeComposite {
+        public constructor(
+            context: AudioContext,   /*  context to associate  */
+            params?: {
             }
         )
     }
