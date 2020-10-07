@@ -27,12 +27,21 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks("grunt-contrib-clean")
     grunt.loadNpmTasks("grunt-browserify")
     grunt.loadNpmTasks("grunt-eslint")
+    grunt.loadNpmTasks("grunt-tslint")
     grunt.initConfig({
         eslint: {
             options: {
                 configFile: "eslint.yaml"
             },
             "audio-node-suite": [ "src/**/*.js" ]
+        },
+        tslint: {
+            "audio-node-suite": {
+                options: {
+                    configuration: "tslint.json"
+                },
+                src: "./src/*.ts"
+            }
         },
         browserify: {
             "audio-node-suite-browser": {
@@ -94,6 +103,6 @@ module.exports = function (grunt) {
             distclean: [ "node_modules" ]
         }
     })
-    grunt.registerTask("default", [ "eslint", "browserify" ])
+    grunt.registerTask("default", [ "eslint", "tslint", "browserify" ])
 }
 
