@@ -3,8 +3,8 @@
     "version":                    "0.9.2",
     "description":                "Audio-Node-Suite -- Web Audio API AudioNode Suite",
     "keywords":                   [ "web", "audio", "api", "audionode", "suite" ],
-    "browser":                    "lib/audio-node-suite.browser.js",
-    "main":                       "lib/audio-node-suite.node.js",
+    "browser":                    "lib/audio-node-suite.js",
+    "main":                       "lib/audio-node-suite.js",
     "license":                    "MIT",
     "repository": {
         "type":                   "git",
@@ -35,7 +35,6 @@
         "eslint-plugin-standard": "4.0.1",
         "eslint-plugin-promise":  "4.2.1",
         "eslint-plugin-import":   "2.22.1",
-        "eslint-plugin-node":     "11.1.0",
         "babelify":               "10.0.0",
         "@babel/preset-env":      "7.11.5",
         "uglifyify":              "5.0.2",

@@ -14,11 +14,8 @@ About
 -----
 
 **Audio-Node-Suite** is a JavaScript library for use in the Browser
-(through its regular [Web Audio API](https://www.w3.org/TR/webaudio/))
-and Node.js (through its Web Audio API emulating
-[web-audio-api](https://github.com/audiojs/web-audio-api) or
-[web-audio-engine](https://github.com/mohayonao/web-audio-engine)
-modules), which provides a suite of Web Audio API compatible
+(through its regular [Web Audio API](https://www.w3.org/TR/webaudio/)),
+which provides a suite of Web Audio API compatible
 [`AudioNode`](https://developer.mozilla.org/en-US/docs/Web/API/AudioNode)
 classes:
 
@@ -79,10 +76,6 @@ Implementation Notice
 Although **Audio-Node-Suite** is written in ECMAScript 2020, it is transpiled to older
 environments and this way runs in really all current (as of 2020)
 JavaScript environments, of course.
-
-Additionally, there are two transpilation results: first, there is a
-compressed `audio-node-suite.browser.js` for Browser environments. Second, there is
-an uncompressed `audio-node-suite.node.js` for Node.js environments.
 
 License
 -------

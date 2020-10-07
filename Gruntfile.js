@@ -44,9 +44,9 @@ module.exports = function (grunt) {
             }
         },
         browserify: {
-            "audio-node-suite-browser": {
+            "audio-node": {
                 files: {
-                    "lib/audio-node-suite.browser.js": [ "src/**/*.js" ]
+                    "lib/audio-node-suite.js": [ "src/**/*.js" ]
                 },
                 options: {
                     transform: [
@@ -60,32 +60,6 @@ module.exports = function (grunt) {
                             ]
                         } ],
                         [ "uglifyify", { sourceMap: false, global: true } ]
-                    ],
-                    plugin: [
-                        [ "browserify-derequire" ],
-                        [ "browserify-header" ]
-                    ],
-                    browserifyOptions: {
-                        standalone: "AudioNodeSuite",
-                        debug: false
-                    }
-                }
-            },
-            "audio-node-suite-node": {
-                files: {
-                    "lib/audio-node-suite.node.js": [ "src/**/*.js" ]
-                },
-                options: {
-                    transform: [
-                        [ "babelify", {
-                            presets: [
-                                [ "@babel/preset-env", {
-                                    "targets": {
-                                        "node": "12.0.0"
-                                    }
-                                } ]
-                            ]
-                        } ]
                     ],
                     plugin: [
                         [ "browserify-derequire" ],
