@@ -44,7 +44,7 @@ module.exports = function (grunt) {
             }
         },
         browserify: {
-            "audio-node": {
+            "audio-node-suite": {
                 files: {
                     "lib/audio-node-suite.js": [ "src/**/*.js" ]
                 },
