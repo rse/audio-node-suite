@@ -1,22 +1,22 @@
 {
-    "name":        "audio-node",
-    "version":     "0.0.0",
-    "description": "Audio-Node -- Web Audio API AudioNode Suite",
-    "keywords":    [ "web", "audio", "api", "audionode", "suite" ],
-    "browser":     "lib/audio-node.browser.js",
-    "main":        "lib/audio-node.node.js",
-    "license":     "MIT",
+    "name":                       "audio-node",
+    "version":                    "0.9.0",
+    "description":                "Audio-Node -- Web Audio API AudioNode Suite",
+    "keywords":                   [ "web", "audio", "api", "audionode", "suite" ],
+    "browser":                    "lib/audio-node.browser.js",
+    "main":                       "lib/audio-node.node.js",
+    "license":                    "MIT",
     "repository": {
-        "type": "git",
-        "url":  "https://github.com/rse/audio-node.git"
+        "type":                   "git",
+        "url":                    "https://github.com/rse/audio-node.git"
     },
     "author": {
-        "name":  "Dr. Ralf S. Engelschall",
-        "email": "rse@engelschall.com",
-        "url":   "http://engelschall.com"
+        "name":                   "Dr. Ralf S. Engelschall",
+        "email":                  "rse@engelschall.com",
+        "url":                    "http://engelschall.com"
     },
-    "homepage": "https://github.com/rse/audio-node",
-    "bugs":     "https://github.com/rse/audio-node/issues",
+    "homepage":                   "https://github.com/rse/audio-node",
+    "bugs":                       "https://github.com/rse/audio-node/issues",
     "dependencies": {
     },
     "devDependencies": {
@@ -43,7 +43,7 @@
         "node":                   ">=12.0.0"
     },
     "scripts": {
-        "prepublishOnly":  "grunt default",
-        "build":           "grunt default"
+        "prepublishOnly":         "grunt default",
+        "build":                  "grunt default"
     }
 }
