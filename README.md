@@ -57,11 +57,6 @@ which provides a suite of Web Audio API compatible `AudioNode` classes:
   which acts as a reasonable filter chain for voice. Its opinionated
   parameters are hard-coded and just based on some experiences.
 
-Usage
------
-
-FIXME
-
 Implementation Notice
 ---------------------
 
