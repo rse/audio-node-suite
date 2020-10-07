@@ -87,7 +87,7 @@ an uncompressed `audio-node-suite.node.js` for Node.js environments.
 License
 -------
 
-Copyright (c) 2020 Dr. Ralf S. Engelschall (http://engelschall.com/)
+Copyright &copy; 2020 Dr. Ralf S. Engelschall &lt;http://engelschall.com&gt;
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
