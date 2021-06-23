@@ -5,7 +5,7 @@ Audio-Node-Suite
 Web Audio API `AudioNode` Suite
 
 <p/>
-<img src="https://nodei.co/npm/audio-node-suite.png?downloads=true&stars=true" alt=""/>
+<a href="https://www.npmjs.com/package/audio-node-suite"><img src="https://nodei.co/npm/audio-node-suite.png?downloads=true&stars=true" alt="npm i audio-node-suite"/></a>
 
 <p/>
 <img src="https://david-dm.org/rse/audio-node-suite.png" alt=""/>
