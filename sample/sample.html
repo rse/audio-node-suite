@@ -4,9 +4,9 @@
         <title>Sample</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script type="text/javascript" src="node_modules/vue/dist/vue.min.js"></script>
-        <script type="text/javascript" src="node_modules/http-vue-loader/src/httpVueLoader.js"></script>
-        <script type="text/javascript" src="node_modules/audio-node-suite/lib/audio-node-suite.browser.js"></script>
+        <script type="text/javascript" src="node_modules/vue/dist/vue.global.js"></script>
+        <script type="text/javascript" src="node_modules/vue3-sfc-loader/dist/vue3-sfc-loader.js"></script>
+        <script type="text/javascript" src="node_modules/audio-node-suite/lib/audio-node-suite.js"></script>
     </head>
     <body>
         <div id="sample">
@@ -17,8 +17,29 @@
             body { margin: 0; padding: 0; width: 100vw; height: 100vh; position: relative; }
         </style>
         <script>
-            Vue.use(httpVueLoader)
-            vm = new Vue({ el: "#sample", components: { "sample": "url:sample.vue" }})
+            const options = {
+                moduleCache: { vue: Vue },
+                async getFile(url) {
+                    const res = await fetch(url)
+                    if (!res.ok)
+                        throw Object.assign(new Error(res.statusText + ' ' + url), { res })
+                    return {
+                        getContentData: (asBinary) => asBinary ? res.arrayBuffer() : res.text()
+                    }
+                },
+                addStyle(textContent) {
+                    const style = Object.assign(document.createElement("style"), { textContent })
+                    const ref = document.head.getElementsByTagName("style")[0] || null
+                    document.head.insertBefore(style, ref)
+                }
+            }
+            const { loadModule } = window["vue3-sfc-loader"]
+            const app = Vue.createApp({
+                components: {
+                    "sample": Vue.defineAsyncComponent(() => loadModule("./sample.vue", options))
+                }
+            })
+            app.mount("#sample")
         </script>
     </body>
 </html>

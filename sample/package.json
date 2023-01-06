@@ -10,11 +10,11 @@
     "license":                     "MIT",
     "main":                        "package.json",
     "devDependencies": {
-        "serve":                   "11.3.2"
+        "serve":                   "14.1.2"
     },
     "dependencies": {
-        "vue":                     "2.6.12",
-        "http-vue-loader":         "1.4.2",
+        "vue":                     "3.2.45",
+        "vue3-sfc-loader":         "0.8.4",
         "audio-node-suite":        ".."
     }
 }
