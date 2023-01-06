@@ -27,21 +27,12 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks("grunt-contrib-clean")
     grunt.loadNpmTasks("grunt-browserify")
     grunt.loadNpmTasks("grunt-eslint")
-    grunt.loadNpmTasks("grunt-tslint")
     grunt.initConfig({
         eslint: {
             options: {
-                configFile: "eslint.yaml"
+                overrideConfigFile: "eslint.yaml"
             },
             "audio-node-suite": [ "src/**/*.js" ]
-        },
-        tslint: {
-            "audio-node-suite": {
-                options: {
-                    configuration: "tslint.json"
-                },
-                src: "./src/*.ts"
-            }
         },
         browserify: {
             "audio-node-suite": {
@@ -54,7 +45,7 @@ module.exports = function (grunt) {
                             presets: [
                                 [ "@babel/preset-env", {
                                     "targets": {
-                                        "browsers": "last 8 versions, > 1%, ie 11"
+                                        "browsers": "last 8 versions, > 1%"
                                     }
                                 } ]
                             ]
@@ -77,6 +68,6 @@ module.exports = function (grunt) {
             distclean: [ "node_modules" ]
         }
     })
-    grunt.registerTask("default", [ "eslint", "tslint", "browserify" ])
+    grunt.registerTask("default", [ "eslint", "browserify" ])
 }
 
