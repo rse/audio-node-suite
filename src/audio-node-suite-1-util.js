@@ -22,7 +22,35 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*  utility functions for converting between dBFS (0.0 .. -120.0) and Gain (1.0 .. 0.0)  */
-export const dBFSToGain = (dbfs) => Math.pow(10, dbfs / 20)
-export const gainTodBFS = (gain) => 20 * Math.log10(gain)
+/*  utility functions for converting from dBFS (0.0 .. -120.0) to Gain (1.0 .. 0.0)  */
+export const dBFSToGain = (dbfs) =>
+    Math.pow(10, dbfs / 20)
+
+/*  utility functions for converting from Gain (1.0 .. 0.0) to dBFS (0.0 .. -120.0)  */
+export const gainTodBFS = (gain) =>
+    20 * Math.log10(gain)
+
+/*  a window "requestAnimationFrame" based timer  */
+export class AnimationFrameTimer {
+    constructor (cb) {
+        this.timer = null
+        if (window !== undefined) {
+            this.timer = { repeat: true }
+            const once = () => {
+                cb()
+                if (this.timer.repeat)
+                    window.requestAnimationFrame(once)
+            }
+            window.requestAnimationFrame(once)
+        }
+        else
+            this.timer = setInterval(() => cb(), 1000 / 60) /* 60 fps */
+    }
+    clear () {
+        if (window !== undefined)
+            this.timer.repeat = false
+        else
+            clearTimeout(this.timer)
+    }
+}
 

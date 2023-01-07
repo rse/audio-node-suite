@@ -23,31 +23,8 @@
 */
 
 /*  internal requirements  */
-import { AudioNodeMeter } from "./audio-node-suite-5-meter.js"
-
-/*  a window "requestAnimationFrame" based timer  */
-class AnimationFrameTimer {
-    constructor (cb) {
-        this.timer = null
-        if (window !== undefined) {
-            this.timer = { repeat: true }
-            const once = () => {
-                cb()
-                if (this.timer.repeat)
-                    window.requestAnimationFrame(once)
-            }
-            window.requestAnimationFrame(once)
-        }
-        else
-            this.timer = setInterval(() => cb(), 1000 / 60) /* 60 fps */
-    }
-    clear () {
-        if (window !== undefined)
-            this.timer.repeat = false
-        else
-            clearTimeout(this.timer)
-    }
-}
+import { AnimationFrameTimer } from "./audio-node-suite-1-util.js"
+import { AudioNodeMeter }      from "./audio-node-suite-5-meter.js"
 
 /*  custom AudioNode: spectrum visualizer  */
 export class AudioNodeSpectrum {
