@@ -47,8 +47,8 @@ export class AudioNodeGate {
             minDecibels:           -120,
             maxDecibels:           0,
             smoothingTimeConstant: 0.0,
-            intervalTime:          params.interval,
-            intervalCountM:        1
+            intervalTime:          2,
+            intervalCount:         200
         })
 
         /*  leverage Gain node for changing the gain  */

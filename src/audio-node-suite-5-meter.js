@@ -34,8 +34,7 @@ export class AudioNodeMeter {
             maxDecibels:           0,
             smoothingTimeConstant: 0.8,
             intervalTime:          3,
-            intervalCountM:        100,  /* -> 300ms (RMS/m) */
-            intervalCountS:        1000  /* -> 3s    (RMS/s) */
+            intervalCount:         100
         }, params)
 
         /*  create underlying analyser node  */
@@ -47,14 +46,10 @@ export class AudioNodeMeter {
 
         /*  initialize internal state  */
         const stat = { peak: -Infinity, rms:  -Infinity, rmsM: -Infinity, rmsS: -Infinity }
-        const rmsMlen  = params.intervalCountM
-        let   rmsMinit = true
-        let   rmsMpos  = 0
-        const rmsMarr  = []
-        const rmsSlen  = params.intervalCountS
-        let   rmsSinit = true
-        let   rmsSpos  = 0
-        const rmsSarr  = []
+        const rmsLen  = params.intervalCount
+        let   rmsInit = true
+        let   rmsPos  = 0
+        const rmsArr  = []
         const dataT = new Float32Array(analyser.fftSize)
         const dataF = new Float32Array(analyser.frequencyBinCount)
 
@@ -67,39 +62,28 @@ export class AudioNodeMeter {
             analyser.getFloatFrequencyData(dataF)
 
             /*  calculate the instant RMS and Peak amplitude of the signal  */
-            if (params.intervalCountM > 0 || params.intervalCountS > 0) {
-                let rms  = 0
-                let peak = -Infinity
-                for (let i = 0; i < dataT.length; i++) {
-                    if (dataT[i] < analyser.minDecibels)
-                        dataT[i] = analyser.minDecibels
-                    else if (dataT[i] > analyser.maxDecibels)
-                        dataT[i] = analyser.maxDecibels
-                    const square = dataT[i] * dataT[i]
-                    rms += square
-                    if (peak < square)
-                        peak = square
-                }
-                stat.rms  = gainTodBFS(Math.sqrt(rms / dataT.length))
-                stat.peak = gainTodBFS(Math.sqrt(peak))
+            let rms  = 0
+            let peak = -Infinity
+            for (let i = 0; i < dataT.length; i++) {
+                if (dataT[i] < analyser.minDecibels)
+                    dataT[i] = analyser.minDecibels
+                else if (dataT[i] > analyser.maxDecibels)
+                    dataT[i] = analyser.maxDecibels
+                const square = dataT[i] * dataT[i]
+                rms += square
+                if (peak < square)
+                    peak = square
             }
+            stat.rms  = gainTodBFS(Math.sqrt(rms / dataT.length))
+            stat.peak = gainTodBFS(Math.sqrt(peak))
 
-            /*  determine momentary RMS  */
-            if (params.intervalCountM > 0) {
-                if (rmsMpos === (rmsMlen - 1) && rmsMinit)
-                    rmsMinit = false
-                rmsMpos = (rmsMpos + 1) % rmsMlen
-                rmsMarr[rmsMpos] = stat.rms
-                stat.rmsM = weightedAverage(rmsMarr, rmsMinit, rmsMpos, rmsMlen)
-            }
-
-            /*  determine short-term RMS  */
-            if (params.intervalCountS > 0) {
-                if (rmsSpos === (rmsSlen - 1) && rmsSinit)
-                    rmsSinit = false
-                rmsSpos = (rmsSpos + 1) % rmsSlen
-                rmsSarr[rmsSpos] = stat.rms
-                stat.rmsS = weightedAverage(rmsSarr, rmsSinit, rmsSpos, rmsSlen)
+            /*  determine RMS over time  */
+            if (rmsLen > 0) {
+                if (rmsPos === (rmsLen - 1) && rmsInit)
+                    rmsInit = false
+                rmsPos = (rmsPos + 1) % rmsLen
+                rmsArr[rmsPos] = stat.rms
+                stat.rmsM = weightedAverage(rmsArr, rmsInit, rmsPos, rmsLen)
             }
         }
         setInterval(measure, params.intervalTime)

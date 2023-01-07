@@ -36,15 +36,13 @@ export class AudioNodeAmplitude {
             maxDecibels:           0,
             smoothingTimeConstant: 0.80,
             intervalTime:          3,
-            intervalCountM:        100,  /* -> 300ms (RMS/m) */
-            intervalCountS:        1000, /* -> 3s    (RMS/s) */
+            intervalCount:         100, /* -> 300ms (RMS/m) */
             layers:                [ -90, -80, -70, -60, -50, -40, -30, -20, -10, 0 ],
             // decibelBar:            [ -94, -54, -18.0, -3.0 ],
             decibelBar:            [ -94, -84, -58.0, -43.0 ],
             colorBar:              [ "#009000", "#00b000", "#e0d000", "#e03030" ],
             colorBarMuted:         [ "#606060", "#808080", "#a0a0a0", "#c0c0c0" ],
-            colorRMSm:             "#ffffff",
-            colorRMSs:             "#ff0000",
+            colorRMS:              "#ffffff",
             colorBackground:       "#000000",
             logarithmic:           true,
             horizontal:            false
@@ -57,8 +55,7 @@ export class AudioNodeAmplitude {
             maxDecibels:           params.maxDecibels,
             smoothingTimeConstant: params.smoothingTimeConstant,
             intervalTime:          params.intervalTime,
-            intervalCountM:        params.intervalCountM,
-            intervalCountS:        params.intervalCountS
+            intervalCount:         params.intervalCount
         })
 
         /*  internal state  */
@@ -89,8 +86,7 @@ export class AudioNodeAmplitude {
         meter._draw = function (canvas) {
             /*  determine meter information  */
             const peak = meter.stat().peak
-            const rmsM = meter.stat().rmsM
-            const rmsS = meter.stat().rmsS
+            const rms  = meter.stat().rmsM
 
             /*  prepare canvas  */
             const canvasCtx = canvas.getContext("2d")
@@ -128,19 +124,12 @@ export class AudioNodeAmplitude {
             }
             drawSeg(from, peak, color)
 
-            const h1 = scaleToCanvasUnits(Math.abs(rmsM - meter.minDecibels))
-            canvasCtx.fillStyle = params.colorRMSm
+            const h = scaleToCanvasUnits(Math.abs(rms - meter.minDecibels))
+            canvasCtx.fillStyle = params.colorRMS
             if (params.horizontal)
-                canvasCtx.fillRect(h1 - 1, 0, 1, canvas.height)
+                canvasCtx.fillRect(h - 1, 0, 1, canvas.height)
             else
-                canvasCtx.fillRect(0, canvas.height - h1, canvas.width, 1)
-
-            const h2 = scaleToCanvasUnits(Math.abs(rmsS - meter.minDecibels))
-            canvasCtx.fillStyle = params.colorRMSs
-            if (params.horizontal)
-                canvasCtx.fillRect(h2 - 1, 0, 1, canvas.height)
-            else
-                canvasCtx.fillRect(0, canvas.height - h2, canvas.width, 1)
+                canvasCtx.fillRect(0, canvas.height - h, canvas.width, 1)
         }
         return meter
     }

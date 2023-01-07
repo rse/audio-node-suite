@@ -53,8 +53,7 @@ export class AudioNodeSpectrum {
             maxDecibels:           params.maxDecibels,
             smoothingTimeConstant: params.smoothingTimeConstant,
             intervalTime:          params.intervalTime,
-            intervalCountM:        0,
-            intervalCountS:        0
+            intervalCount:         0
         })
 
         /*  internal state  */
