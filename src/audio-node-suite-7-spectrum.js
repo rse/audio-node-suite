@@ -84,7 +84,7 @@ export class AudioNodeSpectrum {
         let canvases = []
         let timer = null
 
-        /*  add/remove canvas for spectrum visualization */
+        /*  add/remove canvas for spectrum visualization  */
         meter.draw = function (canvas) {
             canvases.push(canvas)
             if (canvases.length === 1) {
