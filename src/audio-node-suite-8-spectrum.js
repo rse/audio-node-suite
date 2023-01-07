@@ -36,7 +36,6 @@ export class AudioNodeSpectrum {
             maxDecibels:           0,
             smoothingTimeConstant: 0.80,
             intervalTime:          1000 / 60,
-            intervalLength:        10,
             layers:                [ -144, -120, -90, -60, -50, -40, -30, -20, -10, 0 ],
             slices:                [ 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240, 20480 ],
             colorBackground:       "#000000",
@@ -54,7 +53,8 @@ export class AudioNodeSpectrum {
             maxDecibels:           params.maxDecibels,
             smoothingTimeConstant: params.smoothingTimeConstant,
             intervalTime:          params.intervalTime,
-            intervalLength:        params.intervalLength
+            intervalCountM:        0,
+            intervalCountS:        0
         })
 
         /*  internal state  */
@@ -81,7 +81,6 @@ export class AudioNodeSpectrum {
         meter._draw = function (canvas) {
             /*  determine meter information  */
             const data  = meter.dataF()
-            const level = meter.stat().rmsM
 
             /*  prepare canvas  */
             const canvasCtx = canvas.getContext("2d")
@@ -102,11 +101,6 @@ export class AudioNodeSpectrum {
                 const x = Math.log2(slice / 20) * (canvas.width / 10)
                 canvasCtx.fillRect(x, 0, 1, canvas.height)
             }
-
-            /*  draw average decibel bar  */
-            canvasCtx.fillStyle = params.colorAvg
-            const barHeight = (Math.abs(level - meter.minDecibels) / (meter.maxDecibels - meter.minDecibels)) * canvas.height
-            canvasCtx.fillRect(0, canvas.height - barHeight, canvas.width, 1)
 
             /*  draw the decibel per frequency bars  */
             canvasCtx.fillStyle = params.colorBars

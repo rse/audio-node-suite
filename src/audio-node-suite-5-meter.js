@@ -67,34 +67,40 @@ export class AudioNodeMeter {
             analyser.getFloatFrequencyData(dataF)
 
             /*  calculate the instant RMS and Peak amplitude of the signal  */
-            let rms  = 0
-            let peak = -Infinity
-            for (let i = 0; i < dataT.length; i++) {
-                if (dataT[i] < analyser.minDecibels)
-                    dataT[i] = analyser.minDecibels
-                else if (dataT[i] > analyser.maxDecibels)
-                    dataT[i] = analyser.maxDecibels
-                const square = dataT[i] * dataT[i]
-                rms += square
-                if (peak < square)
-                    peak = square
+            if (params.intervalCountM > 0 || params.intervalCountS > 0) {
+                let rms  = 0
+                let peak = -Infinity
+                for (let i = 0; i < dataT.length; i++) {
+                    if (dataT[i] < analyser.minDecibels)
+                        dataT[i] = analyser.minDecibels
+                    else if (dataT[i] > analyser.maxDecibels)
+                        dataT[i] = analyser.maxDecibels
+                    const square = dataT[i] * dataT[i]
+                    rms += square
+                    if (peak < square)
+                        peak = square
+                }
+                stat.rms  = gainTodBFS(Math.sqrt(rms / dataT.length))
+                stat.peak = gainTodBFS(Math.sqrt(peak))
             }
-            stat.rms  = gainTodBFS(Math.sqrt(rms / dataT.length))
-            stat.peak = gainTodBFS(Math.sqrt(peak))
 
             /*  determine momentary RMS  */
-            if (rmsMpos === (rmsMlen - 1) && rmsMinit)
-                rmsMinit = false
-            rmsMpos = (rmsMpos + 1) % rmsMlen
-            rmsMarr[rmsMpos] = stat.rms
-            stat.rmsM = weightedAverage(rmsMarr, rmsMinit, rmsMpos, rmsMlen)
+            if (params.intervalCountM > 0) {
+                if (rmsMpos === (rmsMlen - 1) && rmsMinit)
+                    rmsMinit = false
+                rmsMpos = (rmsMpos + 1) % rmsMlen
+                rmsMarr[rmsMpos] = stat.rms
+                stat.rmsM = weightedAverage(rmsMarr, rmsMinit, rmsMpos, rmsMlen)
+            }
 
             /*  determine short-term RMS  */
-            if (rmsSpos === (rmsSlen - 1) && rmsSinit)
-                rmsSinit = false
-            rmsSpos = (rmsSpos + 1) % rmsSlen
-            rmsSarr[rmsSpos] = stat.rms
-            stat.rmsS = weightedAverage(rmsSarr, rmsSinit, rmsSpos, rmsSlen)
+            if (params.intervalCountS > 0) {
+                if (rmsSpos === (rmsSlen - 1) && rmsSinit)
+                    rmsSinit = false
+                rmsSpos = (rmsSpos + 1) % rmsSlen
+                rmsSarr[rmsSpos] = stat.rms
+                stat.rmsS = weightedAverage(rmsSarr, rmsSinit, rmsSpos, rmsSlen)
+            }
         }
         setInterval(measure, params.intervalTime)
         measure()
