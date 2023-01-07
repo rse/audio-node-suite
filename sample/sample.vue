@@ -193,8 +193,9 @@ module.exports = {
         async setup () {
             this.microStream = await navigator.mediaDevices.getUserMedia({
                 audio: {
-                    echoCancellation: true,
-                    noiseSuppression: true
+                    echoCancellation: false,
+                    noiseSuppression: false,
+                    autoGainControl:  false
                 },
                 video: false
             })
@@ -210,10 +211,9 @@ module.exports = {
 
             /*  create spectrum filter #1  */
             const spectrum1 = new AudioNodeSuite.AudioNodeSpectrum(ac, {
-                fftSize:               4096,
                 minDecibels:           -150,
                 maxDecibels:           0,
-                smoothingTimeConstant: 0.8,
+                layers:                [ -120, -90, -60, -50, -40, -30, -20, -10 ],
                 colorBackground:       "#000000",
                 colorBars:             "#ff0000",
                 colorAvg:              "#ffffff",
@@ -228,10 +228,9 @@ module.exports = {
 
             /*  create spectrum filter #2  */
             const spectrum2 = new AudioNodeSuite.AudioNodeSpectrum(ac, {
-                fftSize:               4096,
                 minDecibels:           -150,
                 maxDecibels:           0,
-                smoothingTimeConstant: 0.8,
+                layers:                [ -120, -90, -60, -50, -40, -30, -20, -10 ],
                 colorBackground:       "#000000",
                 colorBars:             "#00ff00",
                 colorAvg:              "#ffffff",
