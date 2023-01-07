@@ -12,6 +12,8 @@
             <br/>
             <canvas ref="canvas1" class="canvas"></canvas>
             <canvas ref="canvas2" class="canvas"></canvas>
+            <canvas ref="canvasM1" class="canvasM"></canvas>
+            <canvas ref="canvasM2" class="canvasM"></canvas>
         </div>
         <p/>
         <div class="box">
@@ -73,6 +75,10 @@
 .sample .canvas {
     height: 200px;
     width:  512px;
+}
+.sample .canvasM {
+    height: 200px;
+    width:  20px;
 }
 .sample .box {
     border: 1px solid #999999;

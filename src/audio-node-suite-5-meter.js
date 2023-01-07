@@ -22,6 +22,8 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+import { gainTodBFS } from "./audio-node-suite-1-util.js"
+
 /*  custom AudioNode: meter  */
 export class AudioNodeMeter {
     constructor (context, params = {}) {
@@ -43,8 +45,9 @@ export class AudioNodeMeter {
         analyser.smoothingTimeConstant = params.smoothingTimeConstant
 
         /*  create storage bins  */
-        const data       = new Float32Array(analyser.frequencyBinCount)
-        const dataSorted = new Float32Array(analyser.frequencyBinCount)
+        const dataT  = new Float32Array(analyser.fftSize)
+        const dataTS = new Float32Array(analyser.fftSize)
+        const dataF  = new Float32Array(analyser.frequencyBinCount)
 
         /*  internal state  */
         const lvlAvgArr  = []
@@ -74,42 +77,46 @@ export class AudioNodeMeter {
 
         /*  measure the metrics  */
         const measure = () => {
-            /*  store FFT data into storage bin  */
-            analyser.getFloatFrequencyData(data)
+            /*  store time/amplitude data into storage bin  */
+            analyser.getFloatTimeDomainData(dataT)
 
-            /*  calculate the average decibel level of the signal over all frequencies  */
-            const stat = {}
+            /*  store frequency/decibel data into storage bin  */
+            analyser.getFloatFrequencyData(dataF)
+
+            /*  calculate the average (RMS) amplitude of the signal  */
             let total = 0
-            for (let i = 0; i < data.length; i++) {
-                if (data[i] < analyser.minDecibels)
-                    data[i] = analyser.minDecibels
-                else if (data[i] > analyser.maxDecibels)
-                    data[i] = analyser.maxDecibels
-                total += data[i] * data[i]
-                dataSorted[i] = data[i]
+            for (let i = 0; i < dataT.length; i++) {
+                if (dataT[i] < analyser.minDecibels)
+                    dataT[i] = analyser.minDecibels
+                else if (dataT[i] > analyser.maxDecibels)
+                    dataT[i] = analyser.maxDecibels
+                const square = dataT[i] * dataT[i]
+                total += square
+                dataTS[i] = dataT[i]
             }
-            stat.avg = Math.sqrt(total / data.length)
+            const stat = {}
+            stat.avg = gainTodBFS(Math.sqrt(total / dataT.length))
 
             /*  sort frequencies and determine quantiles  */
-            dataSorted.sort()
-            stat.min = dataSorted[0]
-            const q = Math.floor(dataSorted.length / 8)
-            stat.q1  = dataSorted[q * 1]
-            stat.q2  = dataSorted[q * 2]
-            stat.q3  = dataSorted[q * 3]
-            stat.med = dataSorted[q * 4]
-            stat.q4  = dataSorted[q * 5]
-            stat.q5  = dataSorted[q * 6]
-            stat.q6  = dataSorted[q * 7]
-            stat.max = dataSorted[dataSorted.length - 1]
+            dataTS.sort()
+            stat.min = gainTodBFS(dataTS[0])
+            const q = Math.floor(dataTS.length / 8)
+            stat.q1  = gainTodBFS(dataTS[q * 1])
+            stat.q2  = gainTodBFS(dataTS[q * 2])
+            stat.q3  = gainTodBFS(dataTS[q * 3])
+            stat.med = gainTodBFS(dataTS[q * 4])
+            stat.q4  = gainTodBFS(dataTS[q * 5])
+            stat.q5  = gainTodBFS(dataTS[q * 6])
+            stat.q6  = gainTodBFS(dataTS[q * 7])
+            stat.max = gainTodBFS(dataTS[dataTS.length - 1])
 
-            /*  find time-based average  */
+            /*  find time-based/leveled weighted average  */
             lvlAvgPos = (lvlAvgPos + 1) % params.intervalLength
-            lvlAvgArr[lvlAvgPos] = stat.max
+            lvlAvgArr[lvlAvgPos] = stat.avg
             stat.lvlAvg = avg(lvlAvgArr, lvlAvgPos, params.intervalLength)
-            stat.lvlDev = Math.abs(stat.max - stat.lvlAvg)
+            stat.lvlDev = Math.abs(stat.avg - stat.lvlAvg)
 
-            /*  find time-based deviation  */
+            /*  find time-based/leveled weighted deviation  */
             devAvgPos = (devAvgPos + 1) % params.intervalLength
             devAvgArr[devAvgPos] = stat.lvlDev
             stat.devAvg = avg(devAvgArr, devAvgPos, params.intervalLength)
@@ -121,8 +128,9 @@ export class AudioNodeMeter {
         measure()
 
         /*  allow caller to access internals  */
-        analyser.data = () => data
-        analyser.stat = () => analyser._stat
+        analyser.dataT = () => dataT
+        analyser.dataF = () => dataF
+        analyser.stat  = () => analyser._stat
 
         return analyser
     }

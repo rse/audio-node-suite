@@ -57,7 +57,7 @@ export class AudioNodeSpectrum {
             fftSize:               8192,
             minDecibels:           -150,
             maxDecibels:           0,
-            smoothingTimeConstant: 0.75,
+            smoothingTimeConstant: 0.80,
             intervalTime:          1000 / 60,
             intervalLength:        10,
             layers:                [ -120, -90, -60, -30 ],
@@ -103,7 +103,7 @@ export class AudioNodeSpectrum {
         /*  draw spectrum into canvas  */
         meter._draw = function (canvas) {
             /*  determine meter information  */
-            const data  = meter.data()
+            const data  = meter.dataF()
             const level = meter.stat().lvlAvg
 
             /*  prepare canvas  */
