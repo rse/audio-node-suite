@@ -54,10 +54,10 @@ export class AudioNodeSpectrum {
     constructor (context, params = {}) {
         /*  provide parameter defaults  */
         params = Object.assign({}, {
-            fftSize:               4096,
+            fftSize:               8192,
             minDecibels:           -150,
             maxDecibels:           0,
-            smoothingTimeConstant: 0.8,
+            smoothingTimeConstant: 0.75,
             intervalTime:          1000 / 60,
             intervalLength:        10,
             layers:                [ -120, -90, -60, -30 ],
