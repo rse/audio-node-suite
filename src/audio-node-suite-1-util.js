@@ -30,6 +30,32 @@ export const dBFSToGain = (dbfs) =>
 export const gainTodBFS = (gain) =>
     20 * Math.log10(gain)
 
+/*  get the value at a certain frequency in a bucket of frequencies (as returned by "getFloatFrequencyData"  */
+export const getFrequencyValue = (ctx, freq, buckets) => {
+    const nyquist = ctx.sampleRate / 2
+    const index   = Math.round(freq / nyquist * buckets.length)
+    return buckets[index]
+}
+
+/*  calculate weighted average value  */
+export const weightedAverage = (arr, pos, len) => {
+    const max = arr.length < len ? arr.length : len
+    let avg = 0
+    let num = 0
+    for (let i = 0; i <= pos; i++) {
+        const w = i + (max - pos)
+        avg += w * arr[i]
+        num += w
+    }
+    for (let i = pos + 1; i < max; i++) {
+        const w = i - (pos + 1)
+        avg += w * arr[i]
+        num += w
+    }
+    avg /= num
+    return avg
+}
+
 /*  a window "requestAnimationFrame" based timer  */
 export class AnimationFrameTimer {
     constructor (cb) {

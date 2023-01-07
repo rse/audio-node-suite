@@ -10,10 +10,12 @@
                 v-on:click="microMuteToggle"
             />
             <br/>
+            <canvas ref="canvasA1" class="canvasAV"></canvas>
             <canvas ref="canvas1" class="canvas"></canvas>
+            <canvas ref="canvasA2" class="canvasAV"></canvas>
             <canvas ref="canvas2" class="canvas"></canvas>
-            <canvas ref="canvasM1" class="canvasM"></canvas>
-            <canvas ref="canvasM2" class="canvasM"></canvas>
+            <br/>
+            <canvas ref="canvasA3" class="canvasAH"></canvas>
         </div>
         <p/>
         <div class="box">
@@ -74,11 +76,18 @@
 }
 .sample .canvas {
     height: 200px;
-    width:  512px;
+    width:  400px;
+    margin-right: 10px;
 }
-.sample .canvasM {
+.sample .canvasAV {
     height: 200px;
-    width:  20px;
+    width:  10px;
+    margin-right: 4px;
+}
+.sample .canvasAH {
+    height: 10px;
+    width:  200px;
+    margin-right: 4px;
 }
 .sample .box {
     border: 1px solid #999999;
@@ -215,6 +224,24 @@ module.exports = {
             const dst = ac.createMediaStreamDestination()
             this.microStreamFiltered = dst.stream
 
+            /*  create amplitude filter #1 (V)  */
+            const amplitude1 = new AudioNodeSuite.AudioNodeAmplitude(ac, {
+                minDecibels:           -150,
+                maxDecibels:           0,
+                layers:                [ -150, -120, -90, -60, -50, -40, -30, -20, -10, 0 ]
+            })
+            amplitude1.draw(this.$refs.canvasA1)
+
+            /*  create amplitude filter #3 (H)  */
+            const amplitude3 = new AudioNodeSuite.AudioNodeAmplitude(ac, {
+                minDecibels:           -150,
+                maxDecibels:           0,
+                layers:                [ -150, -120, -90, -60, -50, -40, -30, -20, -10, 0 ],
+                horizontal:            true
+            })
+            amplitude3.draw(this.$refs.canvasA3)
+            amplitude3.mute(true)
+
             /*  create spectrum filter #1  */
             const spectrum1 = new AudioNodeSuite.AudioNodeSpectrum(ac, {
                 minDecibels:           -150,
@@ -232,6 +259,14 @@ module.exports = {
             const voicefilter = new AudioNodeSuite.AudioNodeVoice(ac)
             this.nodeVoiceFilter = voicefilter
 
+            /*  create amplitude filter #2  */
+            const amplitude2 = new AudioNodeSuite.AudioNodeAmplitude(ac, {
+                minDecibels:           -150,
+                maxDecibels:           0,
+                layers:                [ -150, -120, -90, -60, -50, -40, -30, -20, -10, 0 ]
+            })
+            amplitude2.draw(this.$refs.canvasA2)
+
             /*  create spectrum filter #2  */
             const spectrum2 = new AudioNodeSuite.AudioNodeSpectrum(ac, {
                 minDecibels:           -150,
@@ -246,10 +281,13 @@ module.exports = {
             spectrum2.draw(this.$refs.canvas2)
 
             /*  connect the audio nodes to a graph  */
+            src.connect(amplitude1)
+            src.connect(amplitude3)
             src.connect(spectrum1)
-            spectrum1.connect(voicefilter)
+            src.connect(voicefilter)
+            voicefilter.connect(amplitude2)
             voicefilter.connect(spectrum2)
-            spectrum2.connect(dst)
+            voicefilter.connect(dst)
         }
     },
     mounted () {

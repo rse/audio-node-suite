@@ -41,11 +41,14 @@ import {
     AudioNodeGate
 } from "./audio-node-suite-6-gate.js"
 import {
+    AudioNodeAmplitude
+} from "./audio-node-suite-7-amplitude.js"
+import {
     AudioNodeSpectrum
-} from "./audio-node-suite-7-spectrum.js"
+} from "./audio-node-suite-8-spectrum.js"
 import {
     AudioNodeVoice
-} from "./audio-node-suite-8-voice.js"
+} from "./audio-node-suite-9-voice.js"
 
 /*  export the traditional way for interoperability reasons
     (as Babel would export an object with a 'default' field)  */
@@ -57,6 +60,7 @@ module.exports = {
     AudioNodeEqualizer,
     AudioNodeMeter,
     AudioNodeGate,
+    AudioNodeAmplitude,
     AudioNodeSpectrum,
     AudioNodeVoice
 }

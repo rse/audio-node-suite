@@ -22,18 +22,18 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { gainTodBFS } from "./audio-node-suite-1-util.js"
+import { gainTodBFS, weightedAverage } from "./audio-node-suite-1-util.js"
 
 /*  custom AudioNode: meter  */
 export class AudioNodeMeter {
     constructor (context, params = {}) {
         /*  provide parameter defaults  */
         params = Object.assign({}, {
-            fftSize:               2048,
-            minDecibels:           -100,
+            fftSize:               512,
+            minDecibels:           -94,
             maxDecibels:           0,
             smoothingTimeConstant: 0.8,
-            intervalTime:          1000 / 120,
+            intervalTime:          3,
             intervalLength:        100
         }, params)
 
@@ -46,33 +46,16 @@ export class AudioNodeMeter {
 
         /*  create storage bins  */
         const dataT  = new Float32Array(analyser.fftSize)
-        const dataTS = new Float32Array(analyser.fftSize)
         const dataF  = new Float32Array(analyser.frequencyBinCount)
 
         /*  internal state  */
-        const lvlAvgArr  = []
         let lvlAvgPos = -1
-        const devAvgArr  = []
-        let devAvgPos = -1
-
-        /*  calculate weighted average value  */
-        const avg = (arr, pos, len) => {
-            const max = arr.length < len ? arr.length : len
-
-            let avg = 0
-            let num = 0
-            for (let i = 0; i <= pos; i++) {
-                const w = i + (max - pos)
-                avg += w * arr[i]
-                num += w
-            }
-            for (let i = pos + 1; i < max; i++) {
-                const w = i - (pos + 1)
-                avg += w * arr[i]
-                num += w
-            }
-            avg /= num
-            return avg
+        let lvlMaxPos = -1
+        const lvlAvgArr  = []
+        const lvlMaxArr  = []
+        for (let i = 0; i < params.intervalLength; i++) {
+            lvlAvgArr[i] = -Infinity
+            lvlMaxArr[i] = -Infinity
         }
 
         /*  measure the metrics  */
@@ -83,8 +66,10 @@ export class AudioNodeMeter {
             /*  store frequency/decibel data into storage bin  */
             analyser.getFloatFrequencyData(dataF)
 
-            /*  calculate the average (RMS) amplitude of the signal  */
+            /*  calculate the average (RMS) and peak (MAX) amplitude of the signal  */
+            const stat = {}
             let total = 0
+            let max = -Infinity
             for (let i = 0; i < dataT.length; i++) {
                 if (dataT[i] < analyser.minDecibels)
                     dataT[i] = analyser.minDecibels
@@ -92,35 +77,21 @@ export class AudioNodeMeter {
                     dataT[i] = analyser.maxDecibels
                 const square = dataT[i] * dataT[i]
                 total += square
-                dataTS[i] = dataT[i]
+                if (max < square)
+                    max = square
             }
-            const stat = {}
             stat.avg = gainTodBFS(Math.sqrt(total / dataT.length))
-
-            /*  sort frequencies and determine quantiles  */
-            dataTS.sort()
-            stat.min = gainTodBFS(dataTS[0])
-            const q = Math.floor(dataTS.length / 8)
-            stat.q1  = gainTodBFS(dataTS[q * 1])
-            stat.q2  = gainTodBFS(dataTS[q * 2])
-            stat.q3  = gainTodBFS(dataTS[q * 3])
-            stat.med = gainTodBFS(dataTS[q * 4])
-            stat.q4  = gainTodBFS(dataTS[q * 5])
-            stat.q5  = gainTodBFS(dataTS[q * 6])
-            stat.q6  = gainTodBFS(dataTS[q * 7])
-            stat.max = gainTodBFS(dataTS[dataTS.length - 1])
+            stat.max = gainTodBFS(Math.sqrt(max))
 
             /*  find time-based/leveled weighted average  */
             lvlAvgPos = (lvlAvgPos + 1) % params.intervalLength
             lvlAvgArr[lvlAvgPos] = stat.avg
-            stat.lvlAvg = avg(lvlAvgArr, lvlAvgPos, params.intervalLength)
-            stat.lvlDev = Math.abs(stat.avg - stat.lvlAvg)
+            stat.lvlAvg = weightedAverage(lvlAvgArr, lvlAvgPos, params.intervalLength)
 
-            /*  find time-based/leveled weighted deviation  */
-            devAvgPos = (devAvgPos + 1) % params.intervalLength
-            devAvgArr[devAvgPos] = stat.lvlDev
-            stat.devAvg = avg(devAvgArr, devAvgPos, params.intervalLength)
-            stat.devDev = Math.abs(stat.lvlDev - stat.devAvg)
+            /*  find time-based/leveled weighted maximum  */
+            lvlMaxPos = (lvlMaxPos + 1) % params.intervalLength
+            lvlMaxArr[lvlMaxPos] = stat.max
+            stat.lvlMax = weightedAverage(lvlMaxArr, lvlMaxPos, params.intervalLength)
 
             analyser._stat = stat
         }
