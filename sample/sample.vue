@@ -226,17 +226,17 @@ module.exports = {
 
             /*  create amplitude filter #1 (V)  */
             const amplitude1 = new AudioNodeSuite.AudioNodeAmplitude(ac, {
-                minDecibels:           -150,
+                minDecibels:           -144,
                 maxDecibels:           0,
-                layers:                [ -150, -120, -90, -60, -50, -40, -30, -20, -10, 0 ]
+                layers:                [ -144, -120, -90, -60, -50, -40, -30, -20, -10, 0 ]
             })
             amplitude1.draw(this.$refs.canvasA1)
 
             /*  create amplitude filter #3 (H)  */
             const amplitude3 = new AudioNodeSuite.AudioNodeAmplitude(ac, {
-                minDecibels:           -150,
+                minDecibels:           -144,
                 maxDecibels:           0,
-                layers:                [ -150, -120, -90, -60, -50, -40, -30, -20, -10, 0 ],
+                layers:                [ -144, -120, -90, -60, -50, -40, -30, -20, -10, 0 ],
                 horizontal:            true
             })
             amplitude3.draw(this.$refs.canvasA3)
@@ -244,7 +244,7 @@ module.exports = {
 
             /*  create spectrum filter #1  */
             const spectrum1 = new AudioNodeSuite.AudioNodeSpectrum(ac, {
-                minDecibels:           -150,
+                minDecibels:           -144,
                 maxDecibels:           0,
                 layers:                [ -120, -90, -60, -50, -40, -30, -20, -10 ],
                 colorBackground:       "#000000",
@@ -261,15 +261,15 @@ module.exports = {
 
             /*  create amplitude filter #2  */
             const amplitude2 = new AudioNodeSuite.AudioNodeAmplitude(ac, {
-                minDecibels:           -150,
+                minDecibels:           -144,
                 maxDecibels:           0,
-                layers:                [ -150, -120, -90, -60, -50, -40, -30, -20, -10, 0 ]
+                layers:                [ -144, -120, -90, -60, -50, -40, -30, -20, -10, 0 ]
             })
             amplitude2.draw(this.$refs.canvasA2)
 
             /*  create spectrum filter #2  */
             const spectrum2 = new AudioNodeSuite.AudioNodeSpectrum(ac, {
-                minDecibels:           -150,
+                minDecibels:           -144,
                 maxDecibels:           0,
                 layers:                [ -120, -90, -60, -50, -40, -30, -20, -10 ],
                 colorBackground:       "#000000",
