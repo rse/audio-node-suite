@@ -59,8 +59,8 @@ export class AudioNodeGate {
         let state = "open"
         let timer = null
         const controlGain = () => {
-            /*  determine current level  */
-            const level = meter.stat().lvlAvg
+            /*  determine current level (based on momentary RMS)  */
+            const level = meter.stat().rmsM
 
             /*  dispatch according to current state  */
             if (state === "closed") {

@@ -34,29 +34,29 @@ export class AudioNodeMeter {
             maxDecibels:           0,
             smoothingTimeConstant: 0.8,
             intervalTime:          3,
-            intervalLength:        100
+            intervalCountM:        100,  /* -> 300ms (RMS/m) */
+            intervalCountS:        1000  /* -> 3s    (RMS/s) */
         }, params)
 
-        /*  create analyser filter  */
+        /*  create underlying analyser node  */
         const analyser = context.createAnalyser()
         analyser.fftSize               = params.fftSize
         analyser.minDecibels           = params.minDecibels
         analyser.maxDecibels           = params.maxDecibels
         analyser.smoothingTimeConstant = params.smoothingTimeConstant
 
-        /*  create storage bins  */
-        const dataT  = new Float32Array(analyser.fftSize)
-        const dataF  = new Float32Array(analyser.frequencyBinCount)
-
-        /*  internal state  */
-        let lvlAvgPos = -1
-        let lvlMaxPos = -1
-        const lvlAvgArr  = []
-        const lvlMaxArr  = []
-        for (let i = 0; i < params.intervalLength; i++) {
-            lvlAvgArr[i] = -Infinity
-            lvlMaxArr[i] = -Infinity
-        }
+        /*  initialize internal state  */
+        const stat = { peak: -Infinity, rms:  -Infinity, rmsM: -Infinity, rmsS: -Infinity }
+        const rmsMlen  = params.intervalCountM
+        let   rmsMinit = true
+        let   rmsMpos  = 0
+        const rmsMarr  = []
+        const rmsSlen  = params.intervalCountS
+        let   rmsSinit = true
+        let   rmsSpos  = 0
+        const rmsSarr  = []
+        const dataT = new Float32Array(analyser.fftSize)
+        const dataF = new Float32Array(analyser.frequencyBinCount)
 
         /*  measure the metrics  */
         const measure = () => {
@@ -66,34 +66,35 @@ export class AudioNodeMeter {
             /*  store frequency/decibel data into storage bin  */
             analyser.getFloatFrequencyData(dataF)
 
-            /*  calculate the average (RMS) and peak (MAX) amplitude of the signal  */
-            const stat = {}
-            let total = 0
-            let max = -Infinity
+            /*  calculate the instant RMS and Peak amplitude of the signal  */
+            let rms  = 0
+            let peak = -Infinity
             for (let i = 0; i < dataT.length; i++) {
                 if (dataT[i] < analyser.minDecibels)
                     dataT[i] = analyser.minDecibels
                 else if (dataT[i] > analyser.maxDecibels)
                     dataT[i] = analyser.maxDecibels
                 const square = dataT[i] * dataT[i]
-                total += square
-                if (max < square)
-                    max = square
+                rms += square
+                if (peak < square)
+                    peak = square
             }
-            stat.avg = gainTodBFS(Math.sqrt(total / dataT.length))
-            stat.max = gainTodBFS(Math.sqrt(max))
+            stat.rms  = gainTodBFS(Math.sqrt(rms / dataT.length))
+            stat.peak = gainTodBFS(Math.sqrt(peak))
 
-            /*  find time-based/leveled weighted average  */
-            lvlAvgPos = (lvlAvgPos + 1) % params.intervalLength
-            lvlAvgArr[lvlAvgPos] = stat.avg
-            stat.lvlAvg = weightedAverage(lvlAvgArr, lvlAvgPos, params.intervalLength)
+            /*  determine momentary RMS  */
+            if (rmsMpos === (rmsMlen - 1) && rmsMinit)
+                rmsMinit = false
+            rmsMpos = (rmsMpos + 1) % rmsMlen
+            rmsMarr[rmsMpos] = stat.rms
+            stat.rmsM = weightedAverage(rmsMarr, rmsMinit, rmsMpos, rmsMlen)
 
-            /*  find time-based/leveled weighted maximum  */
-            lvlMaxPos = (lvlMaxPos + 1) % params.intervalLength
-            lvlMaxArr[lvlMaxPos] = stat.max
-            stat.lvlMax = weightedAverage(lvlMaxArr, lvlMaxPos, params.intervalLength)
-
-            analyser._stat = stat
+            /*  determine short-term RMS  */
+            if (rmsSpos === (rmsSlen - 1) && rmsSinit)
+                rmsSinit = false
+            rmsSpos = (rmsSpos + 1) % rmsSlen
+            rmsSarr[rmsSpos] = stat.rms
+            stat.rmsS = weightedAverage(rmsSarr, rmsSinit, rmsSpos, rmsSlen)
         }
         setInterval(measure, params.intervalTime)
         measure()
@@ -101,8 +102,9 @@ export class AudioNodeMeter {
         /*  allow caller to access internals  */
         analyser.dataT = () => dataT
         analyser.dataF = () => dataF
-        analyser.stat  = () => analyser._stat
+        analyser.stat  = () => stat
 
+        /*  return underlying node  */
         return analyser
     }
 }

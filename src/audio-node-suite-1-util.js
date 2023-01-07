@@ -38,7 +38,7 @@ export const getFrequencyValue = (ctx, freq, buckets) => {
 }
 
 /*  calculate weighted average value  */
-export const weightedAverage = (arr, pos, len) => {
+export const weightedAverage = (arr, init, pos, len) => {
     const max = arr.length < len ? arr.length : len
     let avg = 0
     let num = 0
@@ -47,10 +47,12 @@ export const weightedAverage = (arr, pos, len) => {
         avg += w * arr[i]
         num += w
     }
-    for (let i = pos + 1; i < max; i++) {
-        const w = i - (pos + 1)
-        avg += w * arr[i]
-        num += w
+    if (!init) {
+        for (let i = pos + 1; i < max; i++) {
+            const w = i - (pos + 1)
+            avg += w * arr[i]
+            num += w
+        }
     }
     avg /= num
     return avg

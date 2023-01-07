@@ -81,7 +81,7 @@ export class AudioNodeSpectrum {
         meter._draw = function (canvas) {
             /*  determine meter information  */
             const data  = meter.dataF()
-            const level = meter.stat().lvlAvg
+            const level = meter.stat().rmsM
 
             /*  prepare canvas  */
             const canvasCtx = canvas.getContext("2d")
