@@ -45,6 +45,8 @@ declare module "AudioNodeSuite" {
         bypass(
             enable: boolean          /*  whether to bypass the effects of the node chain  */
         ): void
+        get input:  AudioNode        /*  getter for underlying input  node  */
+        get output: AudioNode        /*  getter for underlying output node  */
         static factory (
             nodes: Array<AudioNode>  /*  (still unlinked) list of nodes to chain sequentially  */
         ): AudioNodeComposite
@@ -134,7 +136,7 @@ declare module "AudioNodeSuite" {
     }
 
     /*  `AudioNode` for meter, measuring the amplitude.  */
-    export class AudioNodeMeter extends AudioNode {
+    export class AudioNodeMeter extends AudioNodeComposite {
         public constructor(
             context: AudioContext,              /*  context to associate  */
             params?: {

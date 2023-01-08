@@ -142,6 +142,24 @@ export class AudioNodeComposite {
             }
         }
 
+        /*  pass-through input and output nodes  */
+        Object.defineProperty(node, "input", {
+            enumerable: true,
+            configurable: true,
+            writeable: false,
+            get () {
+                return input
+            }
+        })
+        Object.defineProperty(node, "output", {
+            enumerable: true,
+            configurable: true,
+            writeable: false,
+            get () {
+                return output
+            }
+        })
+
         /*  return our "AudioNode" representation (instead of ourself)  */
         return node
     }
