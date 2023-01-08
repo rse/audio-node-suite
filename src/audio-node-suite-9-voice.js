@@ -88,7 +88,9 @@ export class AudioNodeVoice {
 
         /*  return a composite node  */
         let composite = new AudioNodeComposite(cutEQ, limiter)
-        composite.adjustGainDecibel = (db, ms = 10) => gain.adjustGainDecibel(gainCompensation + db, ms)
+        composite.adjustGainDecibel = (db, ms = 10) => {
+            gain.adjustGainDecibel(gainCompensation + db, ms)
+        }
         return composite
     }
 }
