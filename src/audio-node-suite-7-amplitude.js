@@ -38,7 +38,7 @@ export class AudioNodeAmplitude {
             intervalTime:          1000 / 60,
             intervalCount:         Math.round(300 / (1000 / 60)), /* for 300ms RMS/m */
             decibelBar:            [ -94, -60, -21.0, -6.0 ],
-            colorBar:              [ "#009000", "#00b000", "#e0d000", "#e03030" ],
+            colorBar:              [ "#306090", "#00b000", "#e0d000", "#e03030" ],
             colorBarMuted:         [ "#606060", "#808080", "#a0a0a0", "#c0c0c0" ],
             colorRMS:              "#ffffff",
             colorBackground:       "#000000",
