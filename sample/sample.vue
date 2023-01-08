@@ -4,6 +4,11 @@
         <div class="box">
             <div class="box-title">Microphone</div>
             <input
+                type="button"
+                v-bind:value="inputType"
+                v-on:click="inputTypeToggle"
+            />
+            <input
                 ref="microMute"
                 type="button"
                 v-bind:value="microMuted ? 'Unmute' : 'Mute'"
@@ -118,6 +123,9 @@ module.exports = {
     props: {
     },
     data: () => ({
+        inputTypeList:        [ "mic", "white", "pink" ],
+        inputTypePos:         0,
+        inputType:            "mic",
         microMuted:           false,
         microVolume:          100,
         microStream:          null,
@@ -202,6 +210,10 @@ module.exports = {
                 })
             }
         },
+        inputTypeToggle () {
+            this.inputTypePos = (this.inputTypePos + 1) % this.inputTypeList.length
+            this.inputType = this.inputTypeList[this.inputTypePos]
+        },
         microMuteToggle () {
             this.microMuted = !this.microMuted
         },
@@ -220,9 +232,21 @@ module.exports = {
                 latencyHint: "interactive"
             })
 
-            const src = ac.createMediaStreamSource(this.microStream)
+            const mic   = ac.createMediaStreamSource(this.microStream)
+            const white = new AudioNodeSuite.AudioNodeNoise(ac, { type: "white" })
+            const pink  = new AudioNodeSuite.AudioNodeNoise(ac, { type: "pink" })
             const dst = ac.createMediaStreamDestination()
             this.microStreamFiltered = dst.stream
+
+            /*  create noise  */
+            const sources = { mic, white, pink }
+            const input = new AudioNodeSuite.AudioNodeGain(ac)
+            this.$watch("inputType", (newType, oldType) => {
+                console.log(newType, oldType)
+                sources[oldType].disconnect(input)
+                sources[newType].connect(input)
+            })
+            mic.connect(input)
 
             /*  create amplitude filter #1 (V)  */
             const amplitude1 = new AudioNodeSuite.AudioNodeAmplitude(ac, {
@@ -261,9 +285,9 @@ module.exports = {
             spectrum2.draw(this.$refs.canvas2)
 
             /*  connect the audio nodes to a graph  */
-            src.connect(amplitude1)
-            src.connect(spectrum1)
-            src.connect(voicefilter)
+            input.connect(amplitude1)
+            input.connect(spectrum1)
+            input.connect(voicefilter)
             voicefilter.connect(amplitude2)
             voicefilter.connect(spectrum2)
             voicefilter.connect(dst)
