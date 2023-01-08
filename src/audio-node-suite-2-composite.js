@@ -145,5 +145,14 @@ export class AudioNodeComposite {
         /*  return our "AudioNode" representation (instead of ourself)  */
         return node
     }
+
+    /*  factory for Composite Web Audio API AudioNode  */
+    static factory (...nodes) {
+        if (nodes.length < 1)
+            throw new Error("at least one node has to be given")
+        for (let i = 0; i < nodes.length - 1; i++)
+            nodes[i].connect(nodes[i + 1])
+        return new AudioNodeComposite(nodes[0], nodes[nodes.length - 1])
+    }
 }
 
