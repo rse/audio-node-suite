@@ -26,23 +26,32 @@ classes:
   `bypass()` method for temporarily bypassing the effect of the
   underlying `AudioNode` instances.
 
+- `AudioNodeNoise`: this is a white or pink noise generator which
+  can be used for testing purposes.
+
 - `AudioNodeGain`, `AudioNodeCompressor`, `AudioNodeLimiter`: these
   are just convenient wrappers for the regular functionality provided
   by the Web Audio API `GainNode` and `DynamicsCompressorNode` classes,
   providing the `bypass()` functionality and some opinionated parameter defaults.
 
 - `AudioNodeEqualizer`: this is based on the Web Audio API `BiquadFilterNode`
-  class and provides a convenient multi-band parametric equalizer `AudioNode`.
+  class and provides a convenient parametric multi-band equalizer `AudioNode`.
 
 - `AudioNodeMeter`: this is based on the Web Audio API `AnalyzerNode`
-  class and continuously tracks and measures the overall volume in
-  decibel of the audio stream. It is also the internal base building
-  block for the `AudioNodeGate` and `AudioNodeSpectrum` classes.
+  class and continuously tracks and measures the overall volume
+  in decibel of the audio stream. It is also the internal base
+  building block for the `AudioNodeGate`, `AudioNodeAmplitude` and
+  `AudioNodeSpectrum` classes.
 
 - `AudioNodeGate`: this is based on the Web Audio API `GainNode`
   class and measures the volume in decibel of the audio stream and
   drains the volume if it drops below a certain decibel threshold. It is
   intended to act as a Noise Gate.
+
+- `AudioNodeAmplitude`: this is based on `AudioNodeMeter` and
+  hence the Web Audio API `AnalyzerNode` class to analyze the
+  volume level of the audio stream and continuously render
+  it into a `Canvas` element in the DOM.
 
 - `AudioNodeSpectrum`: this is based on `AudioNodeMeter` and
   hence the Web Audio API `AnalyzerNode` class to analyze the
@@ -54,7 +63,7 @@ classes:
   `AudioNodeGate`, `AudioNodeCompressor`, `AudioNodeGain` and
   `AudioNodeLimiter` to provide a convenient single `AudioNode`
   which acts as a reasonable filter chain for voice. Its opinionated
-  parameters are intentionally hard-coded and are just based on some
+  parameters are intentionally hard-coded and are just based on
   experiences of the author.
 
 Installation
@@ -73,9 +82,9 @@ for details on the provided Application Programming Interface (API).
 Implementation Notice
 ---------------------
 
-Although **Audio-Node-Suite** is written in ECMAScript 2020, it is transpiled to older
-environments and this way runs in really all current (as of 2020)
-JavaScript environments, of course.
+Although **Audio-Node-Suite** is written in ECMAScript 2020, it is
+transpiled to older environments and this way runs in really all current
+(as of 2023) JavaScript environments, of course.
 
 License
 -------
