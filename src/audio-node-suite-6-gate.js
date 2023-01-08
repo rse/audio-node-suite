@@ -131,7 +131,6 @@ export class AudioNodeGate {
 
             /*  re-schedule next interval  */
             setTimeout(controlGain, params.interval)
-            console.log(state)
         }
 
         /*  schedule first interval  */
