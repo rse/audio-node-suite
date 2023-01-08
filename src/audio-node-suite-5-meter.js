@@ -24,6 +24,7 @@
 
 /*  internal requirements  */
 import { gainTodBFS, ensureWithin, weightedAverage } from "./audio-node-suite-1-util.js"
+import { AudioNodeComposite }                        from "./audio-node-suite-2-composite.js"
 
 /*  custom AudioNode: meter  */
 export class AudioNodeMeter {
@@ -46,7 +47,7 @@ export class AudioNodeMeter {
         analyser.smoothingTimeConstant = params.smoothingTimeConstant
 
         /*  initialize internal state  */
-        const stat = { peak: -Infinity, rms:  -Infinity, rmsM: -Infinity, rmsS: -Infinity }
+        const stat = { peak: -Infinity, rms: -Infinity, rmsM: -Infinity, rmsS: -Infinity }
         const rmsLen  = params.intervalCount
         let   rmsInit = true
         let   rmsPos  = 0
@@ -86,13 +87,12 @@ export class AudioNodeMeter {
         setInterval(measure, params.intervalTime)
         measure()
 
-        /*  allow caller to access internals  */
-        analyser.dataT = () => dataT
-        analyser.dataF = () => dataF
-        analyser.stat  = () => stat
-
-        /*  return underlying node  */
-        return analyser
+        /*  wrap node into a composite and allow caller to access internals  */
+        const composite = new AudioNodeComposite(analyser)
+        composite.dataT = () => dataT
+        composite.dataF = () => dataF
+        composite.stat  = () => stat
+        return composite
     }
 }
 
