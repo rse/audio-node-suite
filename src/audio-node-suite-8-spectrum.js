@@ -79,17 +79,21 @@ export class AudioNodeSpectrum {
         /*  draw spectrum into canvas  */
         meter._draw = function (canvas) {
             /*  determine meter information  */
-            const data  = meter.dataF()
+            const data = meter.dataF()
 
             /*  prepare canvas  */
             const canvasCtx = canvas.getContext("2d")
             canvasCtx.fillStyle = params.colorBackground
             canvasCtx.fillRect(0, 0, canvas.width, canvas.height)
 
+            /*  helper function for scaling decibel to canvas units  */
+            const scaleToCanvasUnits = (value) =>
+                (value / (meter.maxDecibels - meter.minDecibels)) * canvas.height
+
             /*  draw horizontal decibel layers  */
             canvasCtx.fillStyle = params.colorLayers
             for (const layer of params.layers) {
-                const barHeight = (Math.abs(layer - meter.minDecibels) / (meter.maxDecibels - meter.minDecibels)) * canvas.height
+                const barHeight = scaleToCanvasUnits(Math.abs(layer - meter.minDecibels))
                 canvasCtx.fillRect(0, canvas.height - barHeight, canvas.width, 1)
             }
 
@@ -125,7 +129,7 @@ export class AudioNodeSpectrum {
                     db /= (k2 + 1) - k1
 
                     /*  draw the bar  */
-                    const barHeight = (Math.abs(db - meter.minDecibels) / (meter.maxDecibels - meter.minDecibels)) * canvas.height
+                    const barHeight = scaleToCanvasUnits(Math.abs(db - meter.minDecibels))
                     canvasCtx.fillRect(posX, canvas.height - barHeight, barWidth, barHeight)
                 }
             }
@@ -138,7 +142,7 @@ export class AudioNodeSpectrum {
                     const db = data[i]
 
                     /*  draw the bar  */
-                    const barHeight = (Math.abs(db - meter.minDecibels) / (meter.maxDecibels - meter.minDecibels)) * canvas.height
+                    const barHeight = scaleToCanvasUnits(Math.abs(db - meter.minDecibels))
                     canvasCtx.fillRect(posX, canvas.height - barHeight, barWidth - 0.5, barHeight)
 
                     posX += barWidth
