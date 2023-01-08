@@ -23,7 +23,27 @@
 */
 
 /*  internal requirements  */
-import { dBFSToGain } from "./audio-node-suite-1-util.js"
+import { dBFSToGain }         from "./audio-node-suite-1-util.js"
+import { AudioNodeComposite } from "./audio-node-suite-2-composite.js"
+
+/*  custom AudioNode: silence  */
+export class AudioNodeSilence {
+    constructor (context, params = {}) {
+        /*  provide parameter defaults  */
+        params = Object.assign({}, {
+            channels: 1
+        }, params)
+
+        /*  create underlying BufferSource node  */
+        const bs = context.createBufferSource()
+        bs.buffer = null
+        bs.loop = true
+        bs.start(0)
+
+        /*  return convenient composite  */
+        return new AudioNodeComposite(bs)
+    }
+}
 
 /*  custom AudioNode: noise  */
 export class AudioNodeNoise {
