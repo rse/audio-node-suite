@@ -139,7 +139,7 @@ export class AudioNodeLimiter {
         /*  provide parameter defaults  */
         params = Object.assign({}, {
             threshold: -3.0,
-            attack:    0.003,
+            attack:    0.001,
             release:   0.050,
             knee:      0,
             ratio:     20
