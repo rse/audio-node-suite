@@ -59,7 +59,7 @@ export class AudioNodeVoice {
         /*  2. create: noise gate  */
         const gate = new AudioNodeGate(context, {
             threshold:  -50,
-            hysteresis: -6,
+            hysteresis: -3,
             reduction:  -30,
             interval:   2,
             attack:     4,
