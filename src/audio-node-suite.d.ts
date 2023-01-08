@@ -209,9 +209,13 @@ declare module "AudioNodeSuite" {
     /*  `AudioNode` for opinionated voice filtering.  */
     export class AudioNodeVoice extends AudioNodeComposite {
         public constructor(
-            context: AudioContext,   /*  context to associate  */
+            context: AudioContext,     /*  context to associate  */
             params?: {
-                gain?: number        /*  additional decibel to change the gain after processing (default: 0)  */
+                equalizer?:  boolean,  /*  whether to enable equalizer  */
+                noisegate?:  boolean,  /*  whether to enable noise gate (expander)  */
+                compressor?: boolean,  /*  whether to enable compressor  */
+                limiter?:    boolean,  /*  whether to enable limiter (hard compressor)  */
+                gain?:       number    /*  additional decibel to change the gain after processing (default: 0)  */
             }
         )
         adjustGainDecibel(
