@@ -87,12 +87,12 @@ export class AudioNodeSpectrum {
 
             /*  helper function for scaling decibel to canvas units  */
             const scaleToCanvasUnits = (value) =>
-                (value / (meter.maxDecibels - meter.minDecibels)) * canvas.height
+                (value / (params.maxDecibels - params.minDecibels)) * canvas.height
 
             /*  draw horizontal decibel layers  */
             canvasCtx.fillStyle = params.colorLayers
             for (const layer of params.layers) {
-                const barHeight = scaleToCanvasUnits(Math.abs(layer - meter.minDecibels))
+                const barHeight = scaleToCanvasUnits(Math.abs(layer - params.minDecibels))
                 canvasCtx.fillRect(0, canvas.height - barHeight, canvas.width, 1)
             }
 
@@ -128,7 +128,7 @@ export class AudioNodeSpectrum {
                     db /= (k2 + 1) - k1
 
                     /*  draw the bar  */
-                    const barHeight = scaleToCanvasUnits(db - meter.minDecibels)
+                    const barHeight = scaleToCanvasUnits(db - params.minDecibels)
                     canvasCtx.fillRect(posX, canvas.height - barHeight, barWidth, barHeight)
                 }
             }
@@ -141,7 +141,7 @@ export class AudioNodeSpectrum {
                     const db = data[i]
 
                     /*  draw the bar  */
-                    const barHeight = scaleToCanvasUnits(db - meter.minDecibels)
+                    const barHeight = scaleToCanvasUnits(db - params.minDecibels)
                     canvasCtx.fillRect(posX, canvas.height - barHeight, barWidth - 0.5, barHeight)
 
                     posX += barWidth
