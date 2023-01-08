@@ -41,10 +41,10 @@ export class AudioNodeGate {
             release:    20    /*  time to release/clamp-down volume (ms)  */
         }, params)
 
-        /*  leverage Level Meter node for determining volume level  */
+        /*  leverage Meter node for determining volume level  */
         const meter = new AudioNodeMeter(context, {
             fftSize:               2048,
-            minDecibels:           -120,
+            minDecibels:           -144,
             maxDecibels:           0,
             smoothingTimeConstant: 0.0,
             intervalTime:          2,
