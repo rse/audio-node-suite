@@ -32,12 +32,12 @@ export class AudioNodeAmplitude {
         /*  provide parameter defaults  */
         params = Object.assign({}, {
             fftSize:               512,
-            minDecibels:           -94,
+            minDecibels:           -60,
             maxDecibels:           0,
             smoothingTimeConstant: 0.80,
             intervalTime:          1000 / 60,
             intervalCount:         Math.round(300 / (1000 / 60)), /* for 300ms RMS/m */
-            decibelBar:            [ -94, -60, -21.0, -6.0 ],
+            decibelBar:            [ -60, -50, -21.0, -6.0 ],
             colorBar:              [ "#306090", "#00b000", "#e0d000", "#e03030" ],
             colorBarMuted:         [ "#606060", "#808080", "#a0a0a0", "#c0c0c0" ],
             colorRMS:              "#ffffff",
@@ -61,8 +61,8 @@ export class AudioNodeAmplitude {
         let timer = null
 
         /*  allow caller to adjust our mute state  */
-        let muted = false
-        meter.mute = (_muted) => { muted = _muted }
+        let active = true
+        meter.active = (_active) => { active = _active }
 
         /*  add/remove canvas for spectrum visualization  */
         meter.draw = function (canvas) {
@@ -91,7 +91,7 @@ export class AudioNodeAmplitude {
             canvasCtx.fillStyle = params.colorBackground
             canvasCtx.fillRect(0, 0, canvas.width, canvas.height)
 
-            const colorBar = muted ? params.colorBarMuted : params.colorBar
+            const colorBar = active ? params.colorBar : params.colorBarMuted
             const scaleToCanvasUnits = (value) => {
                 if (params.horizontal)
                     return (value / (meter.maxDecibels - meter.minDecibels)) * canvas.width

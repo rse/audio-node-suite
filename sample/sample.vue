@@ -233,7 +233,7 @@ module.exports = {
                 horizontal: true
             })
             amplitude3.draw(this.$refs.canvasA3)
-            amplitude3.mute(true)
+            amplitude3.active(false)
 
             /*  create spectrum filter #1  */
             const spectrum1 = new AudioNodeSuite.AudioNodeSpectrum(ac, {
