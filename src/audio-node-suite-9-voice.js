@@ -49,10 +49,10 @@ export class AudioNodeVoice {
         /*  1. create: cutting equalizer  */
         const cutEQ = new AudioNodeEqualizer(context, {
             bands: [
-                { type: "highpass",  freq:    80, q:  1.00 },
-                { type: "notch",     freq:    50, q: 20.00 },
+                { type: "highpass",  freq:    80, q:  4.00 },
+                { type: "notch",     freq:    50, q:  1.50 },
                 { type: "notch",     freq:   960, q:  1.50 },
-                { type: "lowpass",   freq: 20480, q:  0.50 }
+                { type: "lowpass",   freq: 20480, q:  0.25 }
             ]
         })
 
@@ -60,11 +60,11 @@ export class AudioNodeVoice {
         const gate = new AudioNodeGate(context, {
             threshold:  -50,
             hysteresis: -6,
-            reduction:  -50,
+            reduction:  -30,
             interval:   2,
             attack:     4,
             hold:       40,
-            release:    20
+            release:    200
         })
 
         /*  3. create: compressor  */
@@ -73,7 +73,7 @@ export class AudioNodeVoice {
             attack:    0.003,
             release:   0.400,
             knee:      3.0,
-            ratio:     2.0
+            ratio:     2
         })
 
         /*  4. create: boosting equalizer  */
@@ -86,13 +86,11 @@ export class AudioNodeVoice {
 
         /*  5. create: gain compensator  */
         const gain = new AudioNodeGain(context, {
-            gain: -6.0 + params.gain
+            gain: -9.0 + params.gain
         })
 
         /*  6. create: limiter  */
-        const limiter = new AudioNodeLimiter(context, {
-            threshold: -3.0
-        })
+        const limiter = new AudioNodeLimiter(context)
 
         /*  connect the chain  */
         cutEQ.connect(gate)
