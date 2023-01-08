@@ -257,7 +257,7 @@ module.exports = {
             /*  create spectrum filter #1  */
             const spectrum1 = new AudioNodeSuite.AudioNodeSpectrum(ac, {
                 colorBackground:       "#330000",
-                colorBars:             "#ff0000",
+                colorBars:             "#ff0000aa",
                 colorAvg:              "#ffffff",
                 colorLayers:           "#660000",
                 colorSlices:           "#440000"
@@ -277,7 +277,7 @@ module.exports = {
             /*  create spectrum filter #2  */
             const spectrum2 = new AudioNodeSuite.AudioNodeSpectrum(ac, {
                 colorBackground:       "#003300",
-                colorBars:             "#00ff00",
+                colorBars:             "#00ff00aa",
                 colorAvg:              "#ffffff",
                 colorLayers:           "#006600",
                 colorSlices:           "#004400"
