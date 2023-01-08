@@ -35,8 +35,8 @@ export class AudioNodeAmplitude {
             minDecibels:           -94,
             maxDecibels:           0,
             smoothingTimeConstant: 0.80,
-            intervalTime:          3,
-            intervalCount:         100, /* -> 300ms (RMS/m) */
+            intervalTime:          1000 / 60,
+            intervalCount:         Math.round(300 / (1000 / 60)), /* for 300ms RMS/m */
             layers:                [ -90, -80, -70, -60, -50, -40, -30, -20, -10, 0 ],
             // decibelBar:            [ -94, -54, -18.0, -3.0 ],
             decibelBar:            [ -94, -84, -58.0, -43.0 ],
