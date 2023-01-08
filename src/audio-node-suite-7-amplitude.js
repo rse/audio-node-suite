@@ -37,9 +37,7 @@ export class AudioNodeAmplitude {
             smoothingTimeConstant: 0.80,
             intervalTime:          1000 / 60,
             intervalCount:         Math.round(300 / (1000 / 60)), /* for 300ms RMS/m */
-            layers:                [ -90, -80, -70, -60, -50, -40, -30, -20, -10, 0 ],
-            // decibelBar:            [ -94, -54, -18.0, -3.0 ],
-            decibelBar:            [ -94, -84, -58.0, -43.0 ],
+            decibelBar:            [ -94, -60, -21.0, -6.0 ],
             colorBar:              [ "#009000", "#00b000", "#e0d000", "#e03030" ],
             colorBarMuted:         [ "#606060", "#808080", "#a0a0a0", "#c0c0c0" ],
             colorRMS:              "#ffffff",
