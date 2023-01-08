@@ -256,10 +256,10 @@ module.exports = {
 
             /*  create spectrum filter #1  */
             const spectrum1 = new AudioNodeSuite.AudioNodeSpectrum(ac, {
-                colorBackground:       "#000000",
+                colorBackground:       "#330000",
                 colorBars:             "#ff0000",
                 colorAvg:              "#ffffff",
-                colorLayers:           "#770000",
+                colorLayers:           "#660000",
                 colorSlices:           "#440000"
             })
             spectrum1.draw(this.$refs.canvas1)
@@ -276,11 +276,11 @@ module.exports = {
 
             /*  create spectrum filter #2  */
             const spectrum2 = new AudioNodeSuite.AudioNodeSpectrum(ac, {
-                colorBackground:       "#000000",
+                colorBackground:       "#003300",
                 colorBars:             "#00ff00",
                 colorAvg:              "#ffffff",
-                colorLayers:           "#005500",
-                colorSlices:           "#002200"
+                colorLayers:           "#006600",
+                colorSlices:           "#004400"
             })
             spectrum2.draw(this.$refs.canvas2)
 
