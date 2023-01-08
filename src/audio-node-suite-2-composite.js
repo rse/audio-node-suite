@@ -147,7 +147,7 @@ export class AudioNodeComposite {
     }
 
     /*  factory for Composite Web Audio API AudioNode  */
-    static factory (...nodes) {
+    static factory (nodes) {
         if (nodes.length < 1)
             throw new Error("at least one node has to be given")
         for (let i = 0; i < nodes.length - 1; i++)
