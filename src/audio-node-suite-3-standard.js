@@ -111,7 +111,9 @@ export class AudioNodeNoise {
         bs.buffer = buffer
         bs.loop = true
         bs.start(0)
-        return bs
+
+        /*  return convenient composite  */
+        return new AudioNodeComposite(bs)
     }
 }
 
@@ -126,10 +128,13 @@ export class AudioNodeGain {
         /*  create and configure underlying Gain node  */
         const gain = context.createGain()
         gain.gain.setValueAtTime(dBFSToGain(params.gain), context.currentTime)
-        gain.adjustGainDecibel = (db, ms = 10) => {
+
+        /*  create and return convenient composite  */
+        const composite = new AudioNodeComposite(gain)
+        composite.adjustGainDecibel = (db, ms = 10) => {
             gain.gain.linearRampToValueAtTime(dBFSToGain(db), context.currentTime + ms)
         }
-        return gain
+        return composite
     }
 }
 
@@ -152,7 +157,9 @@ export class AudioNodeCompressor {
         compressor.ratio.setValueAtTime(params.ratio, context.currentTime)
         compressor.attack.setValueAtTime(params.attack, context.currentTime)
         compressor.release.setValueAtTime(params.release, context.currentTime)
-        return compressor
+
+        /*  return convenient composite  */
+        return new AudioNodeComposite(compressor)
     }
 }
 
@@ -175,7 +182,9 @@ export class AudioNodeLimiter {
         limiter.ratio.setValueAtTime(params.ratio, context.currentTime)
         limiter.attack.setValueAtTime(params.attack, context.currentTime)
         limiter.release.setValueAtTime(params.release, context.currentTime)
-        return limiter
+
+        /*  return convenient composite  */
+        return new AudioNodeComposite(limiter)
     }
 }
 

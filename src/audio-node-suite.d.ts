@@ -45,13 +45,26 @@ declare module "AudioNodeSuite" {
         bypass(
             enable: boolean          /*  whether to bypass the effects of the node chain  */
         ): void
+        static factory (
+            nodes: Array<AudioNode>  /*  (still unlinked) list of nodes to chain sequentially  */
+        ): AudioNodeComposite
+    }
+
+    /*  `AudioNode` for convenient silence generation.  */
+    export class AudioNodeSilence extends AudioNodeComposite {
+        public constructor(
+            context: AudioContext,   /*  context to associate  */
+            params?: {
+                channels?: number    /*  number of audio channels (default: 1)  */
+            }
+        )
     }
 
     /*  `AudioNode` for convenient noise generation.
         White noise is random amplitudes across the entire frequency range, and
         pink noise is random amplitudes across the entire frequency range and
         where the amplitudes of the higher frequences are less strong than the low frequences.  */
-    export class AudioNodeNoise extends AudioNode {
+    export class AudioNodeNoise extends AudioNodeComposite {
         public constructor(
             context: AudioContext,   /*  context to associate  */
             params?: {
@@ -63,7 +76,7 @@ declare module "AudioNodeSuite" {
 
     /*  `AudioNode` for convenient Gain control
         which acts on decibels instead of ampliture gain.  */
-    export class AudioNodeGain extends AudioNode {
+    export class AudioNodeGain extends AudioNodeComposite {
         public constructor(
             context: AudioContext,   /*  context to associate  */
             params?: {
@@ -77,7 +90,7 @@ declare module "AudioNodeSuite" {
     }
 
     /*  `AudioNode` for convenient Compressor effect.  */
-    export class AudioNodeCompressor extends AudioNode {
+    export class AudioNodeCompressor extends AudioNodeComposite {
         public constructor(
             context: AudioContext,   /*  context to associate  */
             params?: {
@@ -92,7 +105,7 @@ declare module "AudioNodeSuite" {
 
     /*  `AudioNode` for convenient Limiter effect.
         (effectively, a maximum Compressor near the clipping zone)  */
-    export class AudioNodeLimiter extends AudioNode {
+    export class AudioNodeLimiter extends AudioNodeComposite {
         public constructor(
             context: AudioContext,   /*  context to associate  */
             params?: {
@@ -136,7 +149,7 @@ declare module "AudioNodeSuite" {
     }
 
     /*  `AudioNode` for noise gate.  */
-    export class AudioNodeGate extends AudioNode {
+    export class AudioNodeGate extends AudioNodeComposite {
         public constructor(
             context: AudioContext,    /*  context to associate  */
             params?: {
@@ -152,7 +165,7 @@ declare module "AudioNodeSuite" {
     }
 
     /*  `AudioNode` for amplitude visualization.  */
-    export class AudioNodeAmplitude extends AudioNode {
+    export class AudioNodeAmplitude extends AudioNodeComposite {
         public constructor(
             context: AudioContext,               /*  context to associate  */
             params?: {
@@ -173,7 +186,7 @@ declare module "AudioNodeSuite" {
     }
 
     /*  `AudioNode` for spectrum visualization ("spectrogram" style).  */
-    export class AudioNodeSpectrum extends AudioNode {
+    export class AudioNodeSpectrum extends AudioNodeComposite {
         public constructor(
             context: AudioContext,   /*  context to associate  */
             params?: {

@@ -61,7 +61,7 @@ export class AudioNodeEqualizer {
 
         /*  create result node  */
         if (params.bands.length === 1)
-            return bands[0]
+            return new AudioNodeComposite(bands[0])
         else
             return new AudioNodeComposite(bands[0], bands[bands.length - 1])
     }
