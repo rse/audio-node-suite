@@ -37,6 +37,15 @@ export const getFrequencyValue = (ctx, freq, buckets) => {
     return buckets[index]
 }
 
+/*  ensure a value is within min/max boundaries  */
+export const ensureWithin = (val, min, max) => {
+    if (val < min)
+        val = min
+    else if (val > max)
+        val = max
+    return val
+}
+
 /*  calculate weighted average value  */
 export const weightedAverage = (arr, init, pos, len) => {
     const max = arr.length < len ? arr.length : len

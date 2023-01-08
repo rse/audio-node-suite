@@ -22,7 +22,7 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { gainTodBFS, weightedAverage } from "./audio-node-suite-1-util.js"
+import { gainTodBFS, ensureWithin, weightedAverage } from "./audio-node-suite-1-util.js"
 
 /*  custom AudioNode: meter  */
 export class AudioNodeMeter {
@@ -65,17 +65,13 @@ export class AudioNodeMeter {
             let rms  = 0
             let peak = -Infinity
             for (let i = 0; i < dataT.length; i++) {
-                if (dataT[i] < analyser.minDecibels)
-                    dataT[i] = analyser.minDecibels
-                else if (dataT[i] > analyser.maxDecibels)
-                    dataT[i] = analyser.maxDecibels
                 const square = dataT[i] * dataT[i]
                 rms += square
                 if (peak < square)
                     peak = square
             }
-            stat.rms  = gainTodBFS(Math.sqrt(rms / dataT.length))
-            stat.peak = gainTodBFS(Math.sqrt(peak))
+            stat.rms  = ensureWithin(gainTodBFS(Math.sqrt(rms / dataT.length)), params.minDecibels, params.maxDecibels)
+            stat.peak = ensureWithin(gainTodBFS(Math.sqrt(peak)),               params.minDecibels, params.maxDecibels)
 
             /*  determine RMS over time  */
             if (rmsLen > 0) {
