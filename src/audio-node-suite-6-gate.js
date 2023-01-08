@@ -34,7 +34,7 @@ export class AudioNodeGate {
         params = Object.assign({}, {
             threshold:  -50,  /*  open above threshold (dbFS)  */
             hysteresis: -6,   /*  close below threshold+hysteresis (dbFS)  */
-            reduction:  -25,  /*  reduction of volume gain (dbFS)  */
+            reduction:  -30,  /*  reduction of volume gain (dbFS)  */
             interval:   2,    /*  tracking interval (ms)  */
             attack:     4,    /*  time to attack/clamp-up volume (ms)  */
             hold:       40,   /*  time to hold volume after it dropped below threshold+hysteresis (ms)  */
