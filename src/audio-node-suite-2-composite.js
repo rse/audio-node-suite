@@ -37,10 +37,17 @@ export class AudioNodeComposite {
         const context = input.context
 
         /*  use a no-op AudioNode node to represent us  */
-        const node = context.createGain()
+        let node
+        if (input.numberOfInputs > 0)
+            node = context.createGain()
+        else {
+            node = context.createBufferSource()
+            node.buffer = null
+        }
 
         /*  always initially connect us to the input node  */
-        node.connect(input)
+        if (input.numberOfInputs > 0)
+            node.connect(input)
 
         /*  track the connected targets and bypass state  */
         node._targets = []
@@ -58,7 +65,7 @@ export class AudioNodeComposite {
             /*  connect us to target node  */
             let result
             if (node._bypass)
-                result = node._connect(...target)
+                result = input.numberOfInputs > 0 ? node._connect(...target) : input.connect(...target)
             else
                 result = output.connect(...target)
 
@@ -77,7 +84,7 @@ export class AudioNodeComposite {
             /*  disconnect us from target node  */
             let result
             if (node._bypass)
-                result = node._disconnect(...target)
+                result = input.numberOfInputs > 0 ? node._disconnect(...target) : input.connect(...target)
             else
                 result = output.disconnect(...target)
 
@@ -110,7 +117,8 @@ export class AudioNodeComposite {
                 node.dispatchEvent(new CustomEvent("bypass-enable-before"))
 
                 /*  bypass mode: connect us to targets directly  */
-                node._disconnect(input)
+                if (input.numberOfInputs > 0)
+                    node._disconnect(input)
                 for (const _target of node._targets) {
                     output.disconnect(..._target)
                     node._connect(..._target)
@@ -128,7 +136,8 @@ export class AudioNodeComposite {
                     node._disconnect(..._target)
                     output.connect(..._target)
                 }
-                node._connect(input)
+                if (input.numberOfInputs > 0)
+                    node._connect(input)
 
                 /*  fire event after  */
                 node.dispatchEvent(new CustomEvent("bypass-disable-after"))
