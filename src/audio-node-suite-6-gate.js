@@ -38,7 +38,7 @@ export class AudioNodeGate {
             interval:   2,    /*  tracking interval (ms)  */
             attack:     4,    /*  time to attack/clamp-up volume (ms)  */
             hold:       40,   /*  time to hold volume after it dropped below threshold+hysteresis (ms)  */
-            release:    20    /*  time to release/clamp-down volume (ms)  */
+            release:    200   /*  time to release/clamp-down volume (ms)  */
         }, params)
 
         /*  leverage Meter node for determining volume level  */
@@ -59,8 +59,8 @@ export class AudioNodeGate {
         let state = "open"
         let timer = null
         const controlGain = () => {
-            /*  determine current level (based on momentary RMS)  */
-            const level = meter.stat().rmsM
+            /*  determine current average level  */
+            const level = meter.stat().rms
 
             /*  dispatch according to current state  */
             if (state === "closed") {

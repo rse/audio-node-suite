@@ -32,11 +32,11 @@ export class AudioNodeSpectrum {
         /*  provide parameter defaults  */
         params = Object.assign({}, {
             fftSize:               8192,
-            minDecibels:           -144,
+            minDecibels:           -94,
             maxDecibels:           0,
             smoothingTimeConstant: 0.80,
             intervalTime:          1000 / 60,
-            layers:                [ -144, -120, -90, -60, -50, -40, -30, -20, -10, 0 ],
+            layers:                [ -60, -50, -40, -30, -20, -10 ],
             slices:                [ 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240, 20480 ],
             colorBackground:       "#000000",
             colorBars:             "#00cc00",

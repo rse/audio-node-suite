@@ -225,8 +225,7 @@ module.exports = {
             this.microStreamFiltered = dst.stream
 
             /*  create amplitude filter #1 (V)  */
-            const amplitude1 = new AudioNodeSuite.AudioNodeAmplitude(ac, {
-            })
+            const amplitude1 = new AudioNodeSuite.AudioNodeAmplitude(ac)
             amplitude1.draw(this.$refs.canvasA1)
 
             /*  create amplitude filter #3 (H)  */
@@ -251,8 +250,7 @@ module.exports = {
             this.nodeVoiceFilter = voicefilter
 
             /*  create amplitude filter #2  */
-            const amplitude2 = new AudioNodeSuite.AudioNodeAmplitude(ac, {
-            })
+            const amplitude2 = new AudioNodeSuite.AudioNodeAmplitude(ac)
             amplitude2.draw(this.$refs.canvasA2)
 
             /*  create spectrum filter #2  */
