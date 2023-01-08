@@ -27,6 +27,7 @@ import {
     AudioNodeComposite
 } from "./audio-node-suite-2-composite.js"
 import {
+    AudioNodeNoise,
     AudioNodeGain,
     AudioNodeCompressor,
     AudioNodeLimiter
@@ -54,6 +55,7 @@ import {
     (as Babel would export an object with a 'default' field)  */
 module.exports = {
     AudioNodeComposite,
+    AudioNodeNoise,
     AudioNodeGain,
     AudioNodeCompressor,
     AudioNodeLimiter,
