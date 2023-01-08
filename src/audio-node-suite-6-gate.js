@@ -43,12 +43,12 @@ export class AudioNodeGate {
 
         /*  leverage Meter node for determining volume level  */
         const meter = new AudioNodeMeter(context, {
-            fftSize:               2048,
-            minDecibels:           -144,
+            fftSize:               512,
+            minDecibels:           -94,
             maxDecibels:           0,
-            smoothingTimeConstant: 0.0,
+            smoothingTimeConstant: 0.8,
             intervalTime:          2,
-            intervalCount:         200
+            intervalCount:         25
         })
 
         /*  leverage Gain node for changing the gain  */
