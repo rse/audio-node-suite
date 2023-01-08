@@ -119,16 +119,16 @@ export class AudioNodeCompressor {
             attack:    0.003,
             release:   0.400,
             knee:      3.0,
-            ratio:     2.0
+            ratio:     2
         }, params)
 
         /*  create and configure underlying Compressor node  */
         const compressor = context.createDynamicsCompressor()
-        compressor.threshold.value = params.threshold
-        compressor.knee.value      = params.knee
-        compressor.ratio.value     = params.ratio
-        compressor.attack.value    = params.attack
-        compressor.release.value   = params.release
+        compressor.threshold.setValueAtTime(params.threshold, context.currentTime)
+        compressor.knee.setValueAtTime(params.knee, context.currentTime)
+        compressor.ratio.setValueAtTime(params.ratio, context.currentTime)
+        compressor.attack.setValueAtTime(params.attack, context.currentTime)
+        compressor.release.setValueAtTime(params.release, context.currentTime)
         return compressor
     }
 }
@@ -141,17 +141,17 @@ export class AudioNodeLimiter {
             threshold: -3.0,
             attack:    0.003,
             release:   0.050,
-            knee:      0.0,
-            ratio:     20.0
-        })
+            knee:      0,
+            ratio:     20
+        }, params)
 
         /*  create and configure underlying Compressor node  */
         const limiter = context.createDynamicsCompressor()
-        limiter.threshold.value = params.threshold
-        limiter.knee.value      = params.knee
-        limiter.ratio.value     = params.ratio
-        limiter.attack.value    = params.attack
-        limiter.release.value   = params.release
+        limiter.threshold.setValueAtTime(params.threshold, context.currentTime)
+        limiter.knee.setValueAtTime(params.knee, context.currentTime)
+        limiter.ratio.setValueAtTime(params.ratio, context.currentTime)
+        limiter.attack.setValueAtTime(params.attack, context.currentTime)
+        limiter.release.setValueAtTime(params.release, context.currentTime)
         return limiter
     }
 }
