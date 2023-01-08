@@ -38,16 +38,14 @@ export class AudioNodeComposite {
 
         /*  use a no-op AudioNode node to represent us  */
         let node
-        if (input.numberOfInputs > 0)
+        if (input.numberOfInputs > 0) {
             node = context.createGain()
+            node.connect(input)
+        }
         else {
             node = context.createBufferSource()
             node.buffer = null
         }
-
-        /*  always initially connect us to the input node  */
-        if (input.numberOfInputs > 0)
-            node.connect(input)
 
         /*  track the connected targets and bypass state  */
         node._targets = []
