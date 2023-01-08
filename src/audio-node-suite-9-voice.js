@@ -50,8 +50,8 @@ export class AudioNodeVoice {
                 bands: [
                     { type: "highpass",  freq:    80, q:  0.25 },
                     { type: "highpass",  freq:    80, q:  0.50 },
-                    { type: "notch",     freq:    50, q:  1.50 },
-                    { type: "notch",     freq:   960, q:  1.50 },
+                    { type: "notch",     freq:    50, q:  0.25 },
+                    { type: "notch",     freq:   960, q:  4.00 },
                     { type: "lowpass",   freq: 20480, q:  0.50 },
                     { type: "lowpass",   freq: 20480, q:  0.25 }
                 ]
