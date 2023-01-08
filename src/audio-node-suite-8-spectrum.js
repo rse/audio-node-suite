@@ -32,11 +32,11 @@ export class AudioNodeSpectrum {
         /*  provide parameter defaults  */
         params = Object.assign({}, {
             fftSize:               8192,
-            minDecibels:           -94,
+            minDecibels:           -144,
             maxDecibels:           0,
             smoothingTimeConstant: 0.80,
             intervalTime:          1000 / 60,
-            layers:                [ -60, -50, -40, -30, -20, -10 ],
+            layers:                [ -120, -90, -60, -50, -40, -30, -20, -10 ],
             slices:                [ 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240, 20480 ],
             colorBackground:       "#000000",
             colorBars:             "#00cc00",
@@ -129,7 +129,7 @@ export class AudioNodeSpectrum {
                     db /= (k2 + 1) - k1
 
                     /*  draw the bar  */
-                    const barHeight = scaleToCanvasUnits(Math.abs(db - meter.minDecibels))
+                    const barHeight = scaleToCanvasUnits(db - meter.minDecibels)
                     canvasCtx.fillRect(posX, canvas.height - barHeight, barWidth, barHeight)
                 }
             }
@@ -142,7 +142,7 @@ export class AudioNodeSpectrum {
                     const db = data[i]
 
                     /*  draw the bar  */
-                    const barHeight = scaleToCanvasUnits(Math.abs(db - meter.minDecibels))
+                    const barHeight = scaleToCanvasUnits(db - meter.minDecibels)
                     canvasCtx.fillRect(posX, canvas.height - barHeight, barWidth - 0.5, barHeight)
 
                     posX += barWidth
