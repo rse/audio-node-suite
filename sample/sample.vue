@@ -10,12 +10,12 @@
                 v-on:click="microMuteToggle"
             />
             <br/>
-            <canvas ref="canvasA1" class="canvasAV"></canvas>
             <canvas ref="canvas1" class="canvas"></canvas>
-            <canvas ref="canvasA2" class="canvasAV"></canvas>
             <canvas ref="canvas2" class="canvas"></canvas>
             <br/>
-            <canvas ref="canvasA3" class="canvasAH"></canvas>
+            <canvas ref="canvasA1" class="canvasAH"></canvas>
+            <br/>
+            <canvas ref="canvasA2" class="canvasAH"></canvas>
         </div>
         <p/>
         <div class="box">
@@ -225,15 +225,10 @@ module.exports = {
             this.microStreamFiltered = dst.stream
 
             /*  create amplitude filter #1 (V)  */
-            const amplitude1 = new AudioNodeSuite.AudioNodeAmplitude(ac)
-            amplitude1.draw(this.$refs.canvasA1)
-
-            /*  create amplitude filter #3 (H)  */
-            const amplitude3 = new AudioNodeSuite.AudioNodeAmplitude(ac, {
+            const amplitude1 = new AudioNodeSuite.AudioNodeAmplitude(ac, {
                 horizontal: true
             })
-            amplitude3.draw(this.$refs.canvasA3)
-            amplitude3.active(false)
+            amplitude1.draw(this.$refs.canvasA1)
 
             /*  create spectrum filter #1  */
             const spectrum1 = new AudioNodeSuite.AudioNodeSpectrum(ac, {
@@ -250,7 +245,9 @@ module.exports = {
             this.nodeVoiceFilter = voicefilter
 
             /*  create amplitude filter #2  */
-            const amplitude2 = new AudioNodeSuite.AudioNodeAmplitude(ac)
+            const amplitude2 = new AudioNodeSuite.AudioNodeAmplitude(ac, {
+                horizontal: true
+            })
             amplitude2.draw(this.$refs.canvasA2)
 
             /*  create spectrum filter #2  */
@@ -265,7 +262,6 @@ module.exports = {
 
             /*  connect the audio nodes to a graph  */
             src.connect(amplitude1)
-            src.connect(amplitude3)
             src.connect(spectrum1)
             src.connect(voicefilter)
             voicefilter.connect(amplitude2)
