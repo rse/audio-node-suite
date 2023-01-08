@@ -33,54 +33,89 @@ export class AudioNodeVoice {
     constructor (context, params = {}) {
         /*  provide parameter defaults  */
         params = Object.assign({}, {
-            gain: 0
+            equalizer:  true,
+            noisegate:  true,
+            compressor: true,
+            limiter:    true,
+            gain:       0
         }, params)
 
+        /*  initialize aggregation input  */
+        let nodes = []
+        let compensate = 0
+
         /*  1. create: cutting equalizer  */
-        const cutEQ = new AudioNodeEqualizer(context, {
-            bands: [
-                { type: "highpass",  freq:    80, q:  4.00 },
-                { type: "notch",     freq:    50, q:  1.50 },
-                { type: "notch",     freq:   960, q:  1.50 },
-                { type: "lowpass",   freq: 20480, q:  0.25 }
-            ]
-        })
+        if (params.equalizer) {
+            const cutEQ = new AudioNodeEqualizer(context, {
+                bands: [
+                    { type: "highpass",  freq:    80, q:  4.00 },
+                    { type: "notch",     freq:    50, q:  1.50 },
+                    { type: "notch",     freq:   960, q:  1.50 },
+                    { type: "lowpass",   freq: 20480, q:  0.25 }
+                ]
+            })
+            nodes.push(cutEQ)
+            /* compensate += 0 */
+        }
 
         /*  2. create: noise gate  */
-        const gate = new AudioNodeGate(context)
+        if (params.noisegate) {
+            const gate = new AudioNodeGate(context)
+            nodes.push(gate)
+            /* compensate += 0 */
+        }
 
         /*  3. create: compressor  */
-        const comp = new AudioNodeCompressor(context)
+        if (params.compressor) {
+            const comp = new AudioNodeCompressor(context, {
+                threshold: -16.0,
+                attack:    0.003,
+                release:   0.400,
+                knee:      3.0,
+                ratio:     2
+            })
+            nodes.push(comp)
+            compensate += -2.0
+        }
 
         /*  4. create: boosting equalizer  */
-        const boostEQ = new AudioNodeEqualizer(context, {
-            bands: [
-                { type: "peaking",   freq:   240, q:  0.75, gain: 3.00 },
-                { type: "highshelf", freq:  3840, q:  0.75, gain: 6.00 }
-            ]
-        })
+        if (params.equalizer) {
+            const boostEQ = new AudioNodeEqualizer(context, {
+                bands: [
+                    { type: "peaking",   freq:   240, q:  0.75, gain: 3.00 },
+                    { type: "highshelf", freq:  3840, q:  0.75, gain: 6.00 }
+                ]
+            })
+            nodes.push(boostEQ)
+            compensate += -1.0
+        }
 
         /*  5. create: gain control  */
-        const gainCompensation = -9.0  /*  compensate the filters in this chain  */
-        const gain = new AudioNodeGain(context, {
-            gain: gainCompensation + params.gain
-        })
+        const gain = new AudioNodeGain(context)
+        nodes.push(gain)
 
         /*  6. create: limiter  */
-        const limiter = new AudioNodeLimiter(context)
-
-        /*  connect the chain  */
-        cutEQ.connect(gate)
-        gate.connect(comp)
-        comp.connect(boostEQ)
-        boostEQ.connect(gain)
-        gain.connect(limiter)
-
-        /*  return a composite node  */
-        let composite = new AudioNodeComposite(cutEQ, limiter)
-        composite.adjustGainDecibel = (db, ms = 10) => {
-            gain.adjustGainDecibel(gainCompensation + db, ms)
+        if (params.limiter) {
+            const limiter = new AudioNodeLimiter(context, {
+                threshold: -3.0,
+                attack:    0.001,
+                release:   0.050,
+                knee:      0,
+                ratio:     20
+            })
+            nodes.push(limiter)
+            compensate += -1.0
         }
+
+        /*  create composite node  */
+        const composite = AudioNodeComposite.factory(nodes)
+
+        /*  provide gain adjustment  */
+        composite.adjustGainDecibel = (db, ms = 10) =>
+            gain.adjustGainDecibel(compensate + db, ms)
+        composite.adjustGainDecibel(compensate + params.gain, 0)
+
+        /*  create return a composite node  */
         return composite
     }
 }
