@@ -48,10 +48,10 @@ export class AudioNodeEqualizer {
 
             /*  create and configure underlying Biquad node for band  */
             const band = context.createBiquadFilter()
-            band.type            = options.type
-            band.frequency.value = options.freq
-            band.Q.value         = options.q
-            band.gain.value      = options.gain
+            band.type = options.type
+            band.frequency.setValueAtTime(options.freq, context.currentTime)
+            band.Q.setValueAtTime(options.q, context.currentTime)
+            band.gain.setValueAtTime(options.gain, context.currentTime)
 
             /*  assemble bands  */
             bands.push(band)
