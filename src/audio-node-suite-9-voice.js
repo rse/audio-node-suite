@@ -48,9 +48,11 @@ export class AudioNodeVoice {
         if (params.equalizer) {
             const cutEQ = new AudioNodeEqualizer(context, {
                 bands: [
-                    { type: "highpass",  freq:    80, q:  4.00 },
+                    { type: "highpass",  freq:    80, q:  0.25 },
+                    { type: "highpass",  freq:    80, q:  0.50 },
                     { type: "notch",     freq:    50, q:  1.50 },
                     { type: "notch",     freq:   960, q:  1.50 },
+                    { type: "lowpass",   freq: 20480, q:  0.50 },
                     { type: "lowpass",   freq: 20480, q:  0.25 }
                 ]
             })
