@@ -40,7 +40,6 @@ export class AudioNodeSpectrum {
             slices:                [ 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240, 20480 ],
             colorBackground:       "#000000",
             colorBars:             "#00cc00",
-            colorAvg:              "#00ff00",
             colorLayers:           "#009900",
             colorSlices:           "#009900",
             logarithmic:           true

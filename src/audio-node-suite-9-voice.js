@@ -43,7 +43,7 @@ export class AudioNodeVoice {
     constructor (context, params = {}) {
         /*  provide parameter defaults  */
         params = Object.assign({}, {
-            gain: 0.0
+            gain: 0
         }, params)
 
         /*  1. create: cutting equalizer  */
@@ -70,9 +70,10 @@ export class AudioNodeVoice {
             ]
         })
 
-        /*  5. create: gain compensator  */
+        /*  5. create: gain control  */
+        const gainCompensation = -9.0  /*  compensate the filters in this chain  */
         const gain = new AudioNodeGain(context, {
-            gain: -9.0 + params.gain
+            gain: gainCompensation + params.gain
         })
 
         /*  6. create: limiter  */
@@ -86,7 +87,9 @@ export class AudioNodeVoice {
         gain.connect(limiter)
 
         /*  return a composite node  */
-        return new AudioNodeComposite(cutEQ, limiter)
+        let composite = new AudioNodeComposite(cutEQ, limiter)
+        composite.adjustGainDecibel = (db, ms = 10) => gain.adjustGainDecibel(gainCompensation + db, ms)
+        return composite
     }
 }
 

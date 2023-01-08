@@ -30,7 +30,7 @@ export class AudioNodeNoise {
     constructor (context, params = {}) {
         /*  provide parameter defaults  */
         params = Object.assign({}, {
-            type: "white",
+            type: "pink",
             channels: 1
         }, params)
 
@@ -106,6 +106,9 @@ export class AudioNodeGain {
         /*  create and configure underlying Gain node  */
         const gain = context.createGain()
         gain.gain.setValueAtTime(dBFSToGain(params.gain), context.currentTime)
+        gain.adjustGainDecibel = (db, ms = 10) => {
+            gain.gain.linearRampToValueAtTime(dBFSToGain(db), context.currentTime + ms)
+        }
         return gain
     }
 }

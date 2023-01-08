@@ -37,12 +37,11 @@ export class AudioNodeAmplitude {
             smoothingTimeConstant: 0.80,
             intervalTime:          1000 / 60,
             intervalCount:         Math.round(300 / (1000 / 60)), /* for 300ms RMS/m */
-            decibelBar:            [ -60, -50, -21.0, -6.0 ],
-            colorBar:              [ "#306090", "#00b000", "#e0d000", "#e03030" ],
-            colorBarMuted:         [ "#606060", "#808080", "#a0a0a0", "#c0c0c0" ],
+            decibelBars:           [ -60, -45, -21, -6 ],
+            colorBars:             [ "#306090", "#00b000", "#e0d000", "#e03030" ],
+            colorBarsDeactive:     [ "#606060", "#808080", "#a0a0a0", "#c0c0c0" ],
             colorRMS:              "#ffffff",
             colorBackground:       "#000000",
-            logarithmic:           true,
             horizontal:            false
         }, params)
 
@@ -61,8 +60,8 @@ export class AudioNodeAmplitude {
         let timer = null
 
         /*  allow caller to adjust our mute state  */
-        let active = true
-        meter.active = (_active) => { active = _active }
+        let deactive = false
+        meter.deactive = (_deactive) => { deactive = _deactive }
 
         /*  add/remove canvas for spectrum visualization  */
         meter.draw = function (canvas) {
@@ -91,7 +90,7 @@ export class AudioNodeAmplitude {
             canvasCtx.fillStyle = params.colorBackground
             canvasCtx.fillRect(0, 0, canvas.width, canvas.height)
 
-            const colorBar = active ? params.colorBar : params.colorBarMuted
+            const colorBars = deactive ? params.colorBarsDeactive : params.colorBars
             const scaleToCanvasUnits = (value) => {
                 if (params.horizontal)
                     return (value / (meter.maxDecibels - meter.minDecibels)) * canvas.width
@@ -107,16 +106,16 @@ export class AudioNodeAmplitude {
                 else
                     canvasCtx.fillRect(0, canvas.height - b, canvas.width, h)
             }
-            let len   = Math.min(params.decibelBar.length, colorBar.length)
+            let len   = Math.min(params.decibelBars.length, colorBars.length)
             let from  = meter.minDecibels
-            let color = colorBar[0]
+            let color = colorBars[0]
             for (let i = 0; i < len; i++) {
-                if (peak < params.decibelBar[i])
+                if (peak < params.decibelBars[i])
                     break
                 else {
-                    let to = params.decibelBar[i]
+                    let to = params.decibelBars[i]
                     drawSeg(from, to, color)
-                    color = colorBar[i]
+                    color = colorBars[i]
                     from = to
                 }
             }
