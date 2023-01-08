@@ -22,6 +22,7 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+/*  internal requirements  */
 import { gainTodBFS, ensureWithin, weightedAverage } from "./audio-node-suite-1-util.js"
 
 /*  custom AudioNode: meter  */

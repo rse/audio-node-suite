@@ -23,20 +23,10 @@
 */
 
 /*  internal requirements  */
-import {
-    AudioNodeComposite
-} from "./audio-node-suite-2-composite.js"
-import {
-    AudioNodeGain,
-    AudioNodeCompressor,
-    AudioNodeLimiter
-} from "./audio-node-suite-3-standard.js"
-import {
-    AudioNodeEqualizer
-} from "./audio-node-suite-4-equalizer.js"
-import {
-    AudioNodeGate
-} from "./audio-node-suite-6-gate.js"
+import { AudioNodeComposite }                                   from "./audio-node-suite-2-composite.js"
+import { AudioNodeGain, AudioNodeCompressor, AudioNodeLimiter } from "./audio-node-suite-3-standard.js"
+import { AudioNodeEqualizer }                                   from "./audio-node-suite-4-equalizer.js"
+import { AudioNodeGate }                                        from "./audio-node-suite-6-gate.js"
 
 /*  custom AudioNode: voice filter  */
 export class AudioNodeVoice {
