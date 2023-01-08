@@ -93,12 +93,12 @@ export class AudioNodeAmplitude {
             const colorBars = deactive ? params.colorBarsDeactive : params.colorBars
             const scaleToCanvasUnits = (value) => {
                 if (params.horizontal)
-                    return (value / (meter.maxDecibels - meter.minDecibels)) * canvas.width
+                    return (value / (params.maxDecibels - params.minDecibels)) * canvas.width
                 else
-                    return (value / (meter.maxDecibels - meter.minDecibels)) * canvas.height
+                    return (value / (params.maxDecibels - params.minDecibels)) * canvas.height
             }
             const drawSeg = (from, to, color) => {
-                const b = scaleToCanvasUnits(Math.abs(to - meter.minDecibels))
+                const b = scaleToCanvasUnits(Math.abs(to - params.minDecibels))
                 const h = scaleToCanvasUnits(Math.abs(to - from))
                 canvasCtx.fillStyle = color
                 if (params.horizontal)
@@ -107,7 +107,7 @@ export class AudioNodeAmplitude {
                     canvasCtx.fillRect(0, canvas.height - b, canvas.width, h)
             }
             let len   = Math.min(params.decibelBars.length, colorBars.length)
-            let from  = meter.minDecibels
+            let from  = params.minDecibels
             let color = colorBars[0]
             for (let i = 0; i < len; i++) {
                 if (peak < params.decibelBars[i])
@@ -121,7 +121,7 @@ export class AudioNodeAmplitude {
             }
             drawSeg(from, peak, color)
 
-            const h = scaleToCanvasUnits(Math.abs(rms - meter.minDecibels))
+            const h = scaleToCanvasUnits(Math.abs(rms - params.minDecibels))
             canvasCtx.fillStyle = params.colorRMS
             if (params.horizontal)
                 canvasCtx.fillRect(h - 1, 0, 1, canvas.height)
