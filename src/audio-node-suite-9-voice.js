@@ -57,24 +57,10 @@ export class AudioNodeVoice {
         })
 
         /*  2. create: noise gate  */
-        const gate = new AudioNodeGate(context, {
-            threshold:  -50,
-            hysteresis: -3,
-            reduction:  -30,
-            interval:   2,
-            attack:     4,
-            hold:       40,
-            release:    200
-        })
+        const gate = new AudioNodeGate(context)
 
         /*  3. create: compressor  */
-        const comp = new AudioNodeCompressor(context, {
-            threshold: -16,
-            attack:    0.003,
-            release:   0.400,
-            knee:      3.0,
-            ratio:     2
-        })
+        const comp = new AudioNodeCompressor(context)
 
         /*  4. create: boosting equalizer  */
         const boostEQ = new AudioNodeEqualizer(context, {
