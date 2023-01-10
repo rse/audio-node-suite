@@ -29,9 +29,9 @@ export default Vite.defineConfig(({ command, mode }) => ({
     appType: "custom",
     build: {
         outDir: "lib",
-        minify: (mode === "production"),
+        minify: !(mode === "development"),
         target: "esnext",
-        sourcemap: true,
+        sourcemap: (mode === "development"),
         lib: {
             name:  "AudioNodeSuite",
             entry: "src/audio-node-suite.ts",
