@@ -66,6 +66,22 @@ declare module "AudioNodeSuite" {
         )
     }
 
+    /*  `AudioNode` for convenient Mute control  */
+    export class AudioNodeMute extends AudioNodeComposite {
+        public constructor(
+            context: AudioContext,   /*  context to associate  */
+            params?: {
+                mute?: boolean       /*  whether to mute initially (default: false)  */
+            }
+        )
+        mute(
+            mute: boolean,           /* whether to mute or unmute  */
+            ms?: number              /* linear adjust time in milliseconds (default: 10)  */
+        ): void
+        muted(
+        ): boolean
+    }
+
     /*  `AudioNode` for convenient Gain control
         which acts on decibels instead of ampliture gain.  */
     export class AudioNodeGain extends AudioNodeComposite {
@@ -77,7 +93,7 @@ declare module "AudioNodeSuite" {
         )
         adjustGainDecibel(
             db:  number,             /* target decibel  */
-            ms?: number              /* linear adjust time in milliseconds  */
+            ms?: number              /* linear adjust time in milliseconds (default: 10)  */
         ): void
     }
 

@@ -29,6 +29,8 @@ classes:
 - `AudioNodeNoise`: this is a white or pink noise generator which
   can be used for testing purposes.
 
+- `AudioNodeMute`: this is a simple node for muting the audio stream.
+
 - `AudioNodeGain`, `AudioNodeCompressor`, `AudioNodeLimiter`: these
   are just convenient wrappers for the regular functionality provided
   by the Web Audio API `GainNode` and `DynamicsCompressorNode` classes,

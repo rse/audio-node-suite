@@ -151,7 +151,7 @@ module.exports = {
         microMuted () {
             if (this.microStream === null)
                 return
-            this.microStream.getAudioTracks()[0].enabled = !this.microMuted
+            this.nodeVoiceFilter.mute(this.microMuted)
         }
     },
     methods: {

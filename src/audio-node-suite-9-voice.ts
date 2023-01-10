@@ -23,13 +23,25 @@
 */
 
 /*  internal requirements  */
-import { AudioNodeComposite }                                   from "./audio-node-suite-2-composite.js"
-import { AudioNodeGain, AudioNodeCompressor, AudioNodeLimiter } from "./audio-node-suite-3-standard.js"
-import { AudioNodeEqualizer }                                   from "./audio-node-suite-4-equalizer.js"
-import { AudioNodeGate }                                        from "./audio-node-suite-6-gate.js"
+import {
+    AudioNodeComposite
+} from "./audio-node-suite-2-composite.js"
+import {
+    AudioNodeMute,
+    AudioNodeGain,
+    AudioNodeCompressor,
+    AudioNodeLimiter
+} from "./audio-node-suite-3-standard.js"
+import {
+    AudioNodeEqualizer
+} from "./audio-node-suite-4-equalizer.js"
+import {
+    AudioNodeGate
+} from "./audio-node-suite-6-gate.js"
 
 /*  custom AudioNode: voice filter  */
 export class AudioNodeVoice {
+    declare public mute: (mute: boolean) => void
     declare public adjustGainDecibel: (db: number, ms?: number) => void
     constructor (context: AudioContext, params: {
         equalizer?:  boolean,  /*  whether to enable equalizer  */
@@ -48,6 +60,10 @@ export class AudioNodeVoice {
         /*  initialize aggregation input  */
         const nodes = [] as any[]
         let compensate = 0
+
+        /*  0. create: mute controller  */
+        const mute = new AudioNodeMute(context)
+        nodes.push(mute)
 
         /*  1. create: cutting equalizer  */
         if (params.equalizer) {
@@ -116,6 +132,10 @@ export class AudioNodeVoice {
 
         /*  create composite node  */
         const composite = AudioNodeComposite.factory(nodes as AudioNode[]) as unknown as AudioNodeVoice
+
+        /*  provide mute control  */
+        composite.mute = (_mute: boolean) =>
+            mute.mute(_mute)
 
         /*  provide gain adjustment  */
         composite.adjustGainDecibel = (db, ms = 10) =>

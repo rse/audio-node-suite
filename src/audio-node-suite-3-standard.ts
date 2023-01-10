@@ -113,6 +113,29 @@ export class AudioNodeNoise {
     }
 }
 
+/*  custom AudioNode: mute  */
+export class AudioNodeMute {
+    declare public mute:  (mute: boolean, ms?: number) => void
+    declare public muted: () => boolean
+    constructor (context: AudioContext, params: { muted?: boolean } = {}) {
+        /*  provide parameter defaults  */
+        params.muted ??= false
+
+        /*  create and configure underlying Gain node  */
+        const gain = context.createGain()
+        gain.gain.setValueAtTime(params.muted ? 0.0 : 1.0, context.currentTime)
+
+        /*  create and return convenient composite  */
+        const node = (new AudioNodeComposite(gain) as unknown as AudioNodeMute)
+        node.mute = (_mute: boolean, ms = 10) => {
+            const value = _mute ? 0.0 : 1.0
+            console.log("FUCK", _mute, value)
+            gain.gain.linearRampToValueAtTime(value, context.currentTime + ms / 1000)
+        }
+        return node
+    }
+}
+
 /*  custom AudioNode: gain  */
 export class AudioNodeGain {
     declare public adjustGainDecibel: (db: number, ms: number) => void
