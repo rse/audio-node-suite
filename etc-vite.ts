@@ -22,42 +22,22 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import * as Vite  from "vite"
-import BasicSSL   from "@vitejs/plugin-basic-ssl"
+import * as Vite from "vite"
 
 export default Vite.defineConfig(({ command, mode }) => ({
     base: "",
     appType: "custom",
-    plugins: [
-        BasicSSL()
-    ],
     build: {
         outDir: "lib",
         minify: (mode === "production"),
         target: "esnext",
-        assetsDir: "",
         sourcemap: true,
-        commonjsOptions: {
-            include: [ /node_modules/ ]
-        },
         lib: {
             name:  "AudioNodeSuite",
             entry: "src/audio-node-suite.ts",
             formats: [ "es", "umd", "cjs" ],
             fileName: (format) => `audio-node-suite.${format}.js`
         }
-    },
-    server: {
-        https: true,
-        host:  "0.0.0.0",
-        port:  8443,
-        cors:  true
-    },
-    preview: {
-        https: true,
-        host:  "0.0.0.0",
-        port:  8443,
-        cors:  true
     }
 }))
 
