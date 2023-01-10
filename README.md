@@ -61,7 +61,7 @@ classes:
   it in a (linear or logarithmic) scale to a `Canvas` element in the
   DOM.
 
-- `AudioNodeVoice`: this is based on `AudioNodeEqualizer`,
+- `AudioNodeVoice`: this is based on `AudioNodeMute`, `AudioNodeEqualizer`,
   `AudioNodeGate`, `AudioNodeCompressor`, `AudioNodeGain` and
   `AudioNodeLimiter` to provide a convenient single `AudioNode`
   which acts as a reasonable filter chain for voice. Its opinionated
