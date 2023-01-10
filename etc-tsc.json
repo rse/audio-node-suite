@@ -1,15 +1,15 @@
 {
     "compilerOptions": {
-        "target":                  "ESNext",
+        "target":                  "es2022",
         "useDefineForClassFields": true,
-        "module":                  "ESNext",
+        "module":                  "es2022",
         "moduleResolution":        "Node",
         "strict":                  true,
         "jsx":                     "preserve",
         "resolveJsonModule":       true,
         "isolatedModules":         true,
         "esModuleInterop":         true,
-        "lib":                     [ "ESNext", "DOM" ],
+        "lib":                     [ "es2022", "DOM" ],
         "skipLibCheck":            true,
         "noEmit":                  true,
         "types":                   [ "vite/client" ],

@@ -84,9 +84,12 @@ for details on the provided Application Programming Interface (API).
 Implementation Notice
 ---------------------
 
-Although **Audio-Node-Suite** is written in ECMAScript 2020, it is
-transpiled to older environments and this way runs in really all current
-(as of 2023) JavaScript environments, of course.
+**Audio-Node-Suite** is written in TypeScript 4 (ECMAScript 2022) and
+is transpiled to plain JavaScript (ECMAScript 2022) and this way runs
+in all current (as of 2023/Q1) JavaScript environments, of course. To
+support different loader environment, the transpiled output is provided
+in three distinct variants for ESM (ECMAScript 2022), CommonJS (Node)
+and UMD (Legacy Browser).
 
 License
 -------
