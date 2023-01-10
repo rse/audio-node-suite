@@ -128,7 +128,7 @@ export class AudioNodeGain {
         const node = (new AudioNodeComposite(gain) as unknown as AudioNodeGain)
         node.adjustGainDecibel = (db: number, ms = 10) => {
             ((node as unknown as AudioNodeComposite).input as GainNode)
-                .gain.linearRampToValueAtTime(dBFSToGain(db), context.currentTime + ms)
+                .gain.linearRampToValueAtTime(dBFSToGain(db), context.currentTime + ms / 1000)
         }
         return node
     }
