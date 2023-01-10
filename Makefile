@@ -23,7 +23,6 @@
 ##
 
 NPM   = npm
-GRUNT = ./node_modules/grunt-cli/bin/grunt
 
 all: build
 
@@ -31,11 +30,11 @@ bootstrap:
 	@if [ ! -x $(GRUNT) ]; then $(NPM) install; fi
 
 build: bootstrap
-	@$(GRUNT)
+	@$(NPM) run build
 
 clean: bootstrap
-	@$(GRUNT) clean:clean
+	@$(NPM) run clean
 
 distclean: bootstrap
-	@$(GRUNT) clean:clean clean:distclean
+	@$(NPM) run clean:dist
 

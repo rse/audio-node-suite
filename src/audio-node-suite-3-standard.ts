@@ -28,11 +28,9 @@ import { AudioNodeComposite } from "./audio-node-suite-2-composite.js"
 
 /*  custom AudioNode: silence  */
 export class AudioNodeSilence {
-    constructor (context, params = {}) {
+    constructor (context: AudioContext, params: { channels?: number } = {}) {
         /*  provide parameter defaults  */
-        params = Object.assign({}, {
-            channels: 1
-        }, params)
+        params.channels ??= 1
 
         /*  create underlying BufferSource node  */
         const bs = context.createBufferSource()
@@ -41,18 +39,16 @@ export class AudioNodeSilence {
         bs.start(0)
 
         /*  return convenient composite  */
-        return new AudioNodeComposite(bs)
+        return (new AudioNodeComposite(bs) as unknown as AudioNodeSilence)
     }
 }
 
 /*  custom AudioNode: noise  */
 export class AudioNodeNoise {
-    constructor (context, params = {}) {
+    constructor (context: AudioContext, params: { type?: string, channels?: number } = {}) {
         /*  provide parameter defaults  */
-        params = Object.assign({}, {
-            type: "pink",
-            channels: 1
-        }, params)
+        params.type     ??= "pink"
+        params.channels ??= 1
 
         /*  generate noise  */
         const lengthInSamples = 5 * context.sampleRate
@@ -74,10 +70,10 @@ export class AudioNodeNoise {
             /*  phase 1: generate PINK noise.
                 This is based on the approximating algorithm from Paul Kellett.
                 (see https://www.musicdsp.org/en/latest/_downloads/84bf8a1271c6bb0b3c88253c0546ae0f/pink.txt)  */
-            let pink = []
+            const pink = []
             for (let i = 0; i < params.channels; i++) {
                 pink[i] = new Float32Array(lengthInSamples)
-                let b = [ 0, 0, 0, 0, 0, 0, 0 ]
+                const b = [ 0, 0, 0, 0, 0, 0, 0 ]
                 for (let j = 0; j < lengthInSamples; j++) {
                     const white = (Math.random() * 2) - 1
                     b[0] = 0.99886 * b[0] + white * 0.0555179
@@ -92,8 +88,8 @@ export class AudioNodeNoise {
             }
 
             /*  phase 2: normalize to +/-1 and prevent positive saturation.  */
-            let minA = []
-            let maxA = []
+            const minA = []
+            const maxA = []
             for (let i = 0; i < pink.length; i++) {
                 minA.push(Math.min(...pink[i]))
                 maxA.push(Math.max(...pink[i]))
@@ -113,42 +109,41 @@ export class AudioNodeNoise {
         bs.start(0)
 
         /*  return convenient composite  */
-        return new AudioNodeComposite(bs)
+        return (new AudioNodeComposite(bs) as unknown as AudioNodeNoise)
     }
 }
 
 /*  custom AudioNode: gain  */
 export class AudioNodeGain {
-    constructor (context, params = {}) {
+    declare public adjustGainDecibel: (db: number, ms: number) => void
+    constructor (context: AudioContext, params: { gain?: number } = {}) {
         /*  provide parameter defaults  */
-        params = Object.assign({}, {
-            gain: 0
-        }, params)
+        params.gain ??= 0
 
         /*  create and configure underlying Gain node  */
         const gain = context.createGain()
         gain.gain.setValueAtTime(dBFSToGain(params.gain), context.currentTime)
 
         /*  create and return convenient composite  */
-        const composite = new AudioNodeComposite(gain)
-        composite.adjustGainDecibel = (db, ms = 10) => {
-            gain.gain.linearRampToValueAtTime(dBFSToGain(db), context.currentTime + ms)
+        const node = (new AudioNodeComposite(gain) as unknown as AudioNodeGain)
+        node.adjustGainDecibel = (db: number, ms = 10) => {
+            ((node as unknown as AudioNodeComposite).input as GainNode)
+                .gain.linearRampToValueAtTime(dBFSToGain(db), context.currentTime + ms)
         }
-        return composite
+        return node
     }
 }
 
 /*  custom AudioNode: compressor  */
 export class AudioNodeCompressor {
-    constructor (context, params = {}) {
+    constructor (context: AudioContext, params: { threshold?: number, attack?: number,
+        release?: number, knee?: number, ratio?: number } = {}) {
         /*  provide parameter defaults  */
-        params = Object.assign({}, {
-            threshold: -16.0,
-            attack:    0.003,
-            release:   0.400,
-            knee:      3.0,
-            ratio:     2
-        }, params)
+        params.threshold ??= -16.0
+        params.attack    ??= 0.003
+        params.release   ??= 0.400
+        params.knee      ??= 3.0
+        params.ratio     ??= 2
 
         /*  create and configure underlying Compressor node  */
         const compressor = context.createDynamicsCompressor()
@@ -159,21 +154,20 @@ export class AudioNodeCompressor {
         compressor.release.setValueAtTime(params.release, context.currentTime)
 
         /*  return convenient composite  */
-        return new AudioNodeComposite(compressor)
+        return (new AudioNodeComposite(compressor) as unknown as AudioNodeCompressor)
     }
 }
 
 /*  custom AudioNode: limiter  */
 export class AudioNodeLimiter {
-    constructor (context, params = {}) {
+    constructor (context: AudioContext, params: { threshold?: number, attack?: number,
+        release?: number, knee?: number, ratio?: number } = {}) {
         /*  provide parameter defaults  */
-        params = Object.assign({}, {
-            threshold: -3.0,
-            attack:    0.001,
-            release:   0.050,
-            knee:      0,
-            ratio:     20
-        }, params)
+        params.threshold ??= -3.0
+        params.attack    ??= 0.001
+        params.release   ??= 0.050
+        params.knee      ??= 0
+        params.ratio     ??= 20
 
         /*  create and configure underlying Compressor node  */
         const limiter = context.createDynamicsCompressor()
@@ -184,7 +178,7 @@ export class AudioNodeLimiter {
         limiter.release.setValueAtTime(params.release, context.currentTime)
 
         /*  return convenient composite  */
-        return new AudioNodeComposite(limiter)
+        return (new AudioNodeComposite(limiter) as unknown as AudioNodeLimiter)
     }
 }
 

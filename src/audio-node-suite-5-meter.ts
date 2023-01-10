@@ -28,16 +28,24 @@ import { AudioNodeComposite }                        from "./audio-node-suite-2-
 
 /*  custom AudioNode: meter  */
 export class AudioNodeMeter {
-    constructor (context, params = {}) {
+    declare public dataT: () => Float32Array
+    declare public dataF: () => Float32Array
+    declare public stat:  () => { peak: number, rms: number, rmsM: number, rmsS: number }
+    constructor (context: AudioContext, params: {
+        fftSize?: number,
+        minDecibels?: number,
+        maxDecibels?: number,
+        smoothingTimeConstant?: number,
+        intervalTime?: number,
+        intervalCount?: number
+    } = {}) {
         /*  provide parameter defaults  */
-        params = Object.assign({}, {
-            fftSize:               512,
-            minDecibels:           -94,
-            maxDecibels:           0,
-            smoothingTimeConstant: 0.8,
-            intervalTime:          3,
-            intervalCount:         100
-        }, params)
+        params.fftSize                ??= 512
+        params.minDecibels            ??= -94
+        params.maxDecibels            ??= 0
+        params.smoothingTimeConstant  ??= 0.8
+        params.intervalTime           ??= 3
+        params.intervalCount          ??= 100
 
         /*  create underlying analyser node  */
         const analyser = context.createAnalyser()
@@ -51,7 +59,7 @@ export class AudioNodeMeter {
         const rmsLen  = params.intervalCount
         let   rmsInit = true
         let   rmsPos  = 0
-        const rmsArr  = []
+        const rmsArr  = [] as number[]
         const dataT = new Float32Array(analyser.fftSize)
         const dataF = new Float32Array(analyser.frequencyBinCount)
 
@@ -72,8 +80,10 @@ export class AudioNodeMeter {
                 if (peak < square)
                     peak = square
             }
-            stat.rms  = ensureWithin(gainTodBFS(Math.sqrt(rms / dataT.length)), params.minDecibels, params.maxDecibels)
-            stat.peak = ensureWithin(gainTodBFS(Math.sqrt(peak)),               params.minDecibels, params.maxDecibels)
+            stat.rms  = ensureWithin(gainTodBFS(Math.sqrt(rms / dataT.length)),
+                (params.minDecibels as number), (params.maxDecibels as number))
+            stat.peak = ensureWithin(gainTodBFS(Math.sqrt(peak)),
+                (params.minDecibels as number), (params.maxDecibels as number))
 
             /*  determine RMS over time  */
             if (rmsLen > 0) {
@@ -88,7 +98,7 @@ export class AudioNodeMeter {
         measure()
 
         /*  wrap node into a composite and allow caller to access internals  */
-        const composite = new AudioNodeComposite(analyser)
+        const composite = (new AudioNodeComposite(analyser) as unknown as AudioNodeMeter)
         composite.dataT = () => dataT
         composite.dataF = () => dataF
         composite.stat  = () => stat

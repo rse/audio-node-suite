@@ -29,17 +29,23 @@ import { AudioNodeMeter }     from "./audio-node-suite-5-meter.js"
 
 /*  custom AudioNode: (noise) gate  */
 export class AudioNodeGate {
-    constructor (context, params = {}) {
+    constructor (context: AudioContext, params: {
+        threshold?:  number, /*  open above threshold (dbFS)  */
+        hysteresis?: number, /*  close below threshold+hysteresis (dbFS)  */
+        reduction?:  number, /*  reduction of volume gain (dbFS)  */
+        interval?:   number, /*  tracking interval (ms)  */
+        attack?:     number, /*  time to attack/clamp-up volume (ms)  */
+        hold?:       number, /*  time to hold volume after it dropped below threshold+hysteresis (ms)  */
+        release?:    number  /*  time to release/clamp-down volume (ms)  */
+    } = {}) {
         /*  provide parameter defaults  */
-        params = Object.assign({}, {
-            threshold:  -45,  /*  open above threshold (dbFS)  */
-            hysteresis: -3,   /*  close below threshold+hysteresis (dbFS)  */
-            reduction:  -30,  /*  reduction of volume gain (dbFS)  */
-            interval:   2,    /*  tracking interval (ms)  */
-            attack:     4,    /*  time to attack/clamp-up volume (ms)  */
-            hold:       40,   /*  time to hold volume after it dropped below threshold+hysteresis (ms)  */
-            release:    200   /*  time to release/clamp-down volume (ms)  */
-        }, params)
+        params.threshold  ??= -45
+        params.hysteresis ??= -3
+        params.reduction  ??= -30
+        params.interval   ??= 2
+        params.attack     ??= 4
+        params.hold       ??= 40
+        params.release    ??= 200
 
         /*  leverage Meter node for determining volume level  */
         const meter = new AudioNodeMeter(context, {
@@ -52,12 +58,12 @@ export class AudioNodeGate {
         })
 
         /*  leverage Gain node for changing the gain  */
-        const gain = context.createGain()
-        meter.connect(gain)
+        const gain = context.createGain() as GainNode
+        (meter as unknown as AudioNode).connect(gain)
 
         /*  continuously control gain  */
         let state = "open"
-        let timer = null
+        let timer = NaN
         const gainOpen   = 1.0
         const gainClosed = dBFSToGain(params.reduction)
         const controlGain = () => {
@@ -66,12 +72,12 @@ export class AudioNodeGate {
 
             /*  dispatch according to current state  */
             if (state === "closed") {
-                if (level >= params.threshold) {
+                if (level >= params.threshold!) {
                     /*  ramp up  */
                     state = "attack"
                     gain.gain.cancelScheduledValues(context.currentTime)
-                    gain.gain.linearRampToValueAtTime(gainOpen, context.currentTime + params.attack / 1000)
-                    if (timer !== null)
+                    gain.gain.linearRampToValueAtTime(gainOpen, context.currentTime + params.attack! / 1000)
+                    if (!Number.isNaN(timer))
                         clearTimeout(timer)
                     timer = setTimeout(() => {
                         /*  stay open  */
@@ -80,12 +86,12 @@ export class AudioNodeGate {
                 }
             }
             else if (state === "attack") {
-                if (level < params.threshold + params.hysteresis) {
+                if (level < params.threshold! + params.hysteresis!) {
                     /*  re-close again with a re-release  */
                     state = "release"
                     gain.gain.cancelScheduledValues(context.currentTime)
-                    gain.gain.linearRampToValueAtTime(gainClosed, context.currentTime + params.release / 1000)
-                    if (timer !== null)
+                    gain.gain.linearRampToValueAtTime(gainClosed, context.currentTime + params.release! / 1000)
+                    if (!Number.isNaN(timer))
                         clearTimeout(timer)
                     timer = setTimeout(() => {
                         state = "closed"
@@ -93,16 +99,16 @@ export class AudioNodeGate {
                 }
             }
             else if (state === "open") {
-                if (level < params.threshold + params.hysteresis) {
+                if (level < params.threshold! + params.hysteresis!) {
                     /*  prepare for ramp down  */
                     state = "hold"
-                    if (timer !== null)
+                    if (!Number.isNaN(timer))
                         clearTimeout(timer)
                     timer = setTimeout(() => {
                         /*  ramp down  */
                         state = "release"
                         gain.gain.cancelScheduledValues(context.currentTime)
-                        gain.gain.linearRampToValueAtTime(gainClosed, context.currentTime + params.release / 1000)
+                        gain.gain.linearRampToValueAtTime(gainClosed, context.currentTime + params.release! / 1000)
                         timer = setTimeout(() => {
                             state = "closed"
                         }, params.release)
@@ -110,20 +116,20 @@ export class AudioNodeGate {
                 }
             }
             else if (state === "hold") {
-                if (level >= params.threshold) {
+                if (level >= params.threshold!) {
                     /*  re-open immediately again  */
                     state = "open"
-                    if (timer !== null)
+                    if (!Number.isNaN(timer))
                         clearTimeout(timer)
                 }
             }
             else if (state === "release") {
-                if (level >= params.threshold) {
+                if (level >= params.threshold!) {
                     /*  re-open again with a re-attack  */
                     state = "attack"
                     gain.gain.cancelScheduledValues(context.currentTime)
-                    gain.gain.linearRampToValueAtTime(gainClosed, context.currentTime + params.attack / 1000)
-                    if (timer !== null)
+                    gain.gain.linearRampToValueAtTime(gainClosed, context.currentTime + params.attack! / 1000)
+                    if (!Number.isNaN(timer))
                         clearTimeout(timer)
                     timer = setTimeout(() => {
                         state = "open"
@@ -139,7 +145,7 @@ export class AudioNodeGate {
         setTimeout(controlGain, params.interval)
 
         /*  return compose node  */
-        return new AudioNodeComposite(meter, gain)
+        return (new AudioNodeComposite(meter as unknown as AudioNode, gain)) as unknown as AudioNodeGate
     }
 }
 

@@ -26,17 +26,7 @@ declare module "AudioNodeSuite" {
     /*  Composite `AudioNode` subclass by wrapping the node chain from an
         input node to an output node (if not given, it is the same as the
         input node). The `AudioContext` for the node is taken over from the
-        input node.
-
-        As an `AudioNode` is an `EventEmitter`, this composite node emits the
-        following `CustomEvent` instances for the calls `result = node.[dis]connect(target)`:
-        `CustomEvent("[dis]connect-before", { detail: { target } })` and
-        `CustomEvent("[dis]connect-after", { detail: { result, target } })`.
-        Similar, for the `node.bypass(enable)` calls, it emits:
-        `CustomEvent("bypass-enable-before")`,
-        `CustomEvent("bypass-enable-after")`,
-        `CustomEvent("bypass-disable-before")`, or
-        `CustomEvent("bypass-disable-after")`.  */
+        input node.  */
     export class AudioNodeComposite extends AudioNode {
         public constructor(
             input:   AudioNode,      /*  input  node to wrap  */
@@ -45,8 +35,8 @@ declare module "AudioNodeSuite" {
         bypass(
             enable: boolean          /*  whether to bypass the effects of the node chain  */
         ): void
-        get input:  AudioNode        /*  getter for underlying input  node  */
-        get output: AudioNode        /*  getter for underlying output node  */
+        get input():  AudioNode      /*  getter for underlying input  node  */
+        get output(): AudioNode      /*  getter for underlying output node  */
         static factory (
             nodes: Array<AudioNode>  /*  (still unlinked) list of nodes to chain sequentially  */
         ): AudioNodeComposite
@@ -176,7 +166,7 @@ declare module "AudioNodeSuite" {
                 maxDecibels?:           number,   /*  FFT maximum decibels (default: 0)  */
                 smoothingTimeConstant?: number,   /*  FFT smoothing time constant (default: 0.8)  */
                 intervalTime?:          number,   /*  interval time in milliseconds to act (default: 1000 / 60)  */
-                intervalLength?:        number    /*  interval length for average calculations (default: 300 / (1000 / 60))  */
+                intervalCount?:         number    /*  interval length for average calculations (default: 300 / (1000 / 60))  */
                 decibelBars?:           number[], /*  list of decibel layers to draw (default: [ -60, -45, -21, -6 ])  */
                 colorBars?:             string[], /*  list of color   layers to draw (default: [ "#306090", "#00b000", "#e0d000", "#e03030" ])  */
                 colorBarsDeactive?:     string[], /*  list of color   layers to draw (default: [ "#606060", "#808080", "#a0a0a0", "#c0c0c0" ])  */

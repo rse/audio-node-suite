@@ -30,18 +30,23 @@ import { AudioNodeGate }                                        from "./audio-no
 
 /*  custom AudioNode: voice filter  */
 export class AudioNodeVoice {
-    constructor (context, params = {}) {
+    declare public adjustGainDecibel: (db: number, ms?: number) => void
+    constructor (context: AudioContext, params: {
+        equalizer?:  boolean,  /*  whether to enable equalizer  */
+        noisegate?:  boolean,  /*  whether to enable noise gate (expander)  */
+        compressor?: boolean,  /*  whether to enable compressor  */
+        limiter?:    boolean,  /*  whether to enable limiter (hard compressor)  */
+        gain?:       number    /*  additional decibel to change the gain after processing (default: 0)  */
+    } = {}) {
         /*  provide parameter defaults  */
-        params = Object.assign({}, {
-            equalizer:  true,
-            noisegate:  true,
-            compressor: true,
-            limiter:    true,
-            gain:       0
-        }, params)
+        params.equalizer   ??= true
+        params.noisegate   ??= true
+        params.compressor  ??= true
+        params.limiter     ??= true
+        params.gain        ??= 0
 
         /*  initialize aggregation input  */
-        let nodes = []
+        const nodes = [] as any[]
         let compensate = 0
 
         /*  1. create: cutting equalizer  */
@@ -110,7 +115,7 @@ export class AudioNodeVoice {
         }
 
         /*  create composite node  */
-        const composite = AudioNodeComposite.factory(nodes)
+        const composite = AudioNodeComposite.factory(nodes as AudioNode[]) as unknown as AudioNodeVoice
 
         /*  provide gain adjustment  */
         composite.adjustGainDecibel = (db, ms = 10) =>

@@ -242,7 +242,6 @@ module.exports = {
             const sources = { mic, white, pink }
             const input = new AudioNodeSuite.AudioNodeGain(ac)
             this.$watch("inputType", (newType, oldType) => {
-                console.log(newType, oldType)
                 sources[oldType].disconnect(input)
                 sources[newType].connect(input)
             })

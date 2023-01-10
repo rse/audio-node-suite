@@ -3,8 +3,18 @@
     "version":                    "0.9.9",
     "description":                "Audio-Node-Suite -- Web Audio API AudioNode Suite",
     "keywords":                   [ "web", "audio", "api", "audionode", "suite" ],
-    "browser":                    "lib/audio-node-suite.js",
-    "main":                       "lib/audio-node-suite.js",
+    "type":                       "module",
+    "types":                      "lib/audio-node-suite.d.ts",
+    "browser":                    "lib/audio-node-suite.umd.js",
+    "main":                       "lib/audio-node-suite.cjs.js",
+    "module":                     "lib/audio-node-suite.es.js",
+    "exports": {
+        ".": {
+            "import":             "lib/audio-node-suite.es.js",
+            "require":            "lib/audio-node-suite.cjs.js",
+            "default":            "lib/audio-node-suite.umd.js"
+        }
+    },
     "license":                    "MIT",
     "repository": {
         "type":                   "git",
@@ -20,28 +30,32 @@
     "dependencies": {
     },
     "devDependencies": {
-        "grunt":                  "1.5.3",
-        "grunt-cli":              "1.4.3",
-        "grunt-contrib-clean":    "2.0.1",
-        "grunt-browserify":       "6.0.0",
-        "grunt-eslint":           "24.0.1",
-        "@babel/core":            "7.20.12",
-        "eslint":                 "8.31.0",
-        "eslint-config-standard": "17.0.0",
-        "eslint-plugin-promise":  "6.1.1",
-        "eslint-plugin-import":   "2.26.0",
-        "eslint-plugin-node":     "11.1.0",
-        "babelify":               "10.0.0",
-        "@babel/preset-env":      "7.20.2",
-        "uglifyify":              "5.0.2",
-        "browserify-header":      "1.1.0",
-        "browserify-derequire":   "1.1.1"
+        "npm-run-all":              "4.1.5",
+        "vite":                     "4.0.4",
+        "@vitejs/plugin-basic-ssl": "1.0.1",
+
+        "eslint":                           "8.31.0",
+        "@typescript-eslint/parser":        "5.48.1",
+        "@typescript-eslint/eslint-plugin": "5.48.1",
+        "eslint-config-standard":           "17.0.0",
+        "eslint-plugin-import":             "2.26.0",
+        "eslint-plugin-node":               "11.1.0",
+
+        "typescript":                       "4.9.4",
+        "rimraf":                           "3.0.2"
     },
     "engines": {
         "node":                   ">=12.0.0"
     },
     "scripts": {
-        "prepublishOnly":         "grunt default",
-        "build":                  "grunt default"
+        "prepublishOnly":         "lint",
+        "lint":                   "npm-run-all --print-label --silent --sequential lint:tsc lint:eslint",
+        "lint:tsc":               "tsc --project etc-tsc.json --noEmit",
+        "lint:eslint":            "eslint --config etc-eslint.yaml --ext ts src/*.ts",
+        "start":                  "vite --config etc-vite.ts --logLevel info --mode development",
+        "build":                  "vite --config etc-vite.ts build --logLevel info --mode production",
+        "preview":                "vite --config etc-vite.ts preview --logLevel info",
+        "clean":                  "rimraf lib",
+        "clean:dist":             "rimraf lib node_modules"
     }
 }

@@ -22,7 +22,7 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*  import all internally exported classes  */
+/*  import everything  */
 import {
     AudioNodeComposite
 } from "./audio-node-suite-2-composite.js"
@@ -51,9 +51,8 @@ import {
     AudioNodeVoice
 } from "./audio-node-suite-9-voice.js"
 
-/*  export the traditional way for interoperability reasons
-    (as Babel would export an object with a 'default' field)  */
-module.exports = {
+/*  export everything  */
+export default {
     AudioNodeComposite,
     AudioNodeNoise,
     AudioNodeGain,

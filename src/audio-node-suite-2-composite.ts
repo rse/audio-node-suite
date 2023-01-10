@@ -23,87 +23,91 @@
 */
 
 /*  Composite Web Audio API AudioNode  */
-export class AudioNodeComposite {
-    constructor (input, output) {
+export class AudioNodeComposite extends GainNode {
+    private _bypass      = false
+    private _connect:    any
+    private _disconnect: any
+    private _targets     = [] as any[]
+    declare public context: BaseAudioContext
+    declare public input:   AudioNode
+    declare public output:  AudioNode
+    declare public bypass:  (bypass: boolean) => void
+    constructor (input: AudioNode, output: AudioNode = input) {
+        super(input.context)
+
         /*  require at least a wrapped input node  */
         if (typeof input !== "object" || !(input instanceof AudioNode))
             throw new Error("input has to be a valid AudioNode")
-
-        /*  allow distinct output node, or use the input one  */
-        if (typeof output !== "object")
-            output = input
 
         /*  determine AudioContext via input node  */
         const context = input.context
 
         /*  use a no-op AudioNode node to represent us  */
-        let node
+        let node: AudioNodeComposite
         if (input.numberOfInputs > 0) {
-            node = context.createGain()
+            node = context.createGain() as unknown as AudioNodeComposite
             node.connect(input)
         }
         else {
-            node = context.createBufferSource()
-            node.buffer = null
+            const bs = context.createBufferSource()
+            bs.buffer = null
+            node = bs as unknown as AudioNodeComposite
         }
 
         /*  track the connected targets and bypass state  */
-        node._targets = []
+        node._targets = [] as AudioNode[]
         node._bypass  = false
 
         /*  provide an overloaded Web API "connect" method  */
         node._connect = node.connect
-        node.connect = (...target) => {
+        const connect = (...args: any[]): any => {
             /*  track target  */
-            node._targets.push(target)
-
-            /*  fire event before  */
-            node.dispatchEvent(new CustomEvent("connect-before", { detail: { target } }))
+            node._targets.push(args)
 
             /*  connect us to target node  */
-            let result
-            if (node._bypass)
-                result = input.numberOfInputs > 0 ? node._connect(...target) : input.connect(...target)
+            let result: any
+            if (node._bypass) {
+                if (input.numberOfInputs > 0)
+                    result = node._connect(...args)
+                else
+                    result = (input.connect as (...args: any[]) => any)(...args)
+            }
             else
-                result = output.connect(...target)
-
-            /*  fire event after  */
-            node.dispatchEvent(new CustomEvent("connect-after", { detail: { result, target } }))
+                result = (output.connect as (...args: any[]) => any)(...args)
 
             return result
         }
+        node.connect = connect
 
         /*  provide an overloaded Web API "disconnect" method  */
         node._disconnect = node.disconnect
-        node.disconnect = (...target) => {
-            /*  fire event before  */
-            node.dispatchEvent(new CustomEvent("disconnect-before", { detail: { target } }))
-
+        node.disconnect = (...args: any[]): any => {
             /*  disconnect us from target node  */
-            let result
-            if (node._bypass)
-                result = input.numberOfInputs > 0 ? node._disconnect(...target) : input.connect(...target)
+            let result: any
+            if (node._bypass) {
+                if (input.numberOfInputs > 0)
+                    result = node._disconnect(...args)
+                else
+                    result = (input.connect as (...args: any[]) => any)(...args)
+            }
             else
-                result = output.disconnect(...target)
+                result = (output.disconnect as (...args: any[]) => any)(...args)
 
             /*  untrack target  */
-            node._targets = node._targets.filter((_target) => {
-                if (_target.length !== target.length)
+            node._targets = node._targets.filter((_target: any[]) => {
+                if (_target.length !== args.length)
                     return true
-                for (let i = 0; i < target.length; i++)
-                    if (_target[i] !== target[i])
+                for (let i = 0; i < args.length; i++)
+                    if (_target[i] !== args[i])
                         return true
                 return false
             })
-
-            /*  fire event before  */
-            node.dispatchEvent(new CustomEvent("disconnect-after", { detail: { result, target } }))
 
             return result
         }
 
         /*  provide a custom "bypass" method  */
-        node.bypass = (bypass) => {
+        node.bypass = (bypass: boolean) => {
             /*  short-circuit no operations  */
             if (node._bypass === bypass)
                 return
@@ -111,61 +115,35 @@ export class AudioNodeComposite {
             /*  take over new state and dispatch according to it  */
             node._bypass = bypass
             if (node._bypass) {
-                /*  fire event before  */
-                node.dispatchEvent(new CustomEvent("bypass-enable-before"))
-
                 /*  bypass mode: connect us to targets directly  */
                 if (input.numberOfInputs > 0)
                     node._disconnect(input)
                 for (const _target of node._targets) {
-                    output.disconnect(..._target)
+                    (output.disconnect as (...args: any[]) => any)(..._target)
                     node._connect(..._target)
                 }
-
-                /*  fire event after  */
-                node.dispatchEvent(new CustomEvent("bypass-enable-after"))
             }
             else {
-                /*  fire event before  */
-                node.dispatchEvent(new CustomEvent("bypass-disable-before"))
-
                 /*  regular mode: connect us to to targets via input/output nodes  */
                 for (const _target of node._targets) {
-                    node._disconnect(..._target)
-                    output.connect(..._target)
+                    node._disconnect.apply(null, _target);
+                    (output.connect as (...args: any[]) => any)(..._target)
                 }
                 if (input.numberOfInputs > 0)
                     node._connect(input)
-
-                /*  fire event after  */
-                node.dispatchEvent(new CustomEvent("bypass-disable-after"))
             }
         }
 
         /*  pass-through input and output nodes  */
-        Object.defineProperty(node, "input", {
-            enumerable: true,
-            configurable: true,
-            writeable: false,
-            get () {
-                return input
-            }
-        })
-        Object.defineProperty(node, "output", {
-            enumerable: true,
-            configurable: true,
-            writeable: false,
-            get () {
-                return output
-            }
-        })
+        node.input  = input
+        node.output = output
 
         /*  return our "AudioNode" representation (instead of ourself)  */
         return node
     }
 
     /*  factory for Composite Web Audio API AudioNode  */
-    static factory (nodes) {
+    static factory (nodes: AudioNode[]) {
         if (nodes.length < 1)
             throw new Error("at least one node has to be given")
         for (let i = 0; i < nodes.length - 1; i++)

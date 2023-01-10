@@ -23,22 +23,22 @@
 */
 
 /*  utility functions for converting from dBFS (0.0 .. -120.0) to Gain (1.0 .. 0.0)  */
-export const dBFSToGain = (dbfs) =>
+export const dBFSToGain = (dbfs: number) =>
     Math.pow(10, dbfs / 20)
 
 /*  utility functions for converting from Gain (1.0 .. 0.0) to dBFS (0.0 .. -120.0)  */
-export const gainTodBFS = (gain) =>
+export const gainTodBFS = (gain: number) =>
     20 * Math.log10(gain)
 
 /*  get the value at a certain frequency in a bucket of frequencies (as returned by "getFloatFrequencyData"  */
-export const getFrequencyValue = (ctx, freq, buckets) => {
+export const getFrequencyValue = (ctx: AudioContext, freq: number, buckets: Float32Array) => {
     const nyquist = ctx.sampleRate / 2
     const index   = Math.round(freq / nyquist * buckets.length)
     return buckets[index]
 }
 
 /*  ensure a value is within min/max boundaries  */
-export const ensureWithin = (val, min, max) => {
+export const ensureWithin = (val: number, min: number, max: number) => {
     if (val < min)
         val = min
     else if (val > max)
@@ -47,7 +47,7 @@ export const ensureWithin = (val, min, max) => {
 }
 
 /*  calculate weighted average value  */
-export const weightedAverage = (arr, init, pos, len) => {
+export const weightedAverage = (arr: number[], init: boolean, pos: number, len: number) => {
     const max = arr.length < len ? arr.length : len
     let avg = 0
     let num = 0
@@ -69,13 +69,13 @@ export const weightedAverage = (arr, init, pos, len) => {
 
 /*  a window "requestAnimationFrame" based timer  */
 export class AnimationFrameTimer {
-    constructor (cb) {
-        this.timer = null
+    private timer = NaN
+    private timerStop = false
+    constructor (cb: () => void) {
         if (window !== undefined) {
-            this.timer = { repeat: true }
             const once = () => {
                 cb()
-                if (this.timer.repeat)
+                if (!this.timerStop)
                     window.requestAnimationFrame(once)
             }
             window.requestAnimationFrame(once)
@@ -85,7 +85,7 @@ export class AnimationFrameTimer {
     }
     clear () {
         if (window !== undefined)
-            this.timer.repeat = false
+            this.timerStop = true
         else
             clearTimeout(this.timer)
     }
