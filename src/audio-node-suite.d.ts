@@ -24,20 +24,22 @@
 
 declare module "AudioNodeSuite" {
     /*  Composite `AudioNode` subclass by wrapping the node chain from an
-        input node to an output node (if not given, it is the same as the
-        input node). The `AudioContext` for the node is taken over from the
-        input node.  */
+        input node to an output node  */
     export class AudioNodeComposite extends AudioNode {
+        public input:  AudioNode     /*  the underlying input  node  */
+        public output: AudioNode     /*  the underlying output node  */
         public constructor(
+            context: AudioContext    /*  context to associate  */
+        )
+        chain(
             input:   AudioNode,      /*  input  node to wrap  */
             output?: AudioNode       /*  output node to wrap  */
-        )
-        bypass(
-            enable: boolean          /*  whether to bypass the effects of the node chain  */
         ): void
-        get input():  AudioNode      /*  getter for underlying input  node  */
-        get output(): AudioNode      /*  getter for underlying output node  */
+        bypass(
+            bypass: boolean          /*  whether to bypass the effects of the node chain  */
+        ): void
         static factory (
+            context: AudioContext,   /*  context to associate  */
             nodes: Array<AudioNode>  /*  (still unlinked) list of nodes to chain sequentially  */
         ): AudioNodeComposite
     }
@@ -78,8 +80,6 @@ declare module "AudioNodeSuite" {
             mute: boolean,           /* whether to mute or unmute  */
             ms?: number              /* linear adjust time in milliseconds (default: 10)  */
         ): void
-        muted(
-        ): boolean
     }
 
     /*  `AudioNode` for convenient Gain control
@@ -226,9 +226,13 @@ declare module "AudioNodeSuite" {
                 gain?:       number    /*  additional decibel to change the gain after processing (default: 0)  */
             }
         )
+        mute(
+            mute: boolean,             /* whether to mute or unmute  */
+            ms?: number                /* linear adjust time in milliseconds (default: 10)  */
+        ): void
         adjustGainDecibel(
-            db:  number,             /* target decibel  */
-            ms?: number              /* linear adjust time in milliseconds  */
+            db:  number,               /* target decibel  */
+            ms?: number                /* linear adjust time in milliseconds  */
         ): void
     }
 }
