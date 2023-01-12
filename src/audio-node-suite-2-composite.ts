@@ -22,6 +22,10 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+/*  internal signature of connect/disconnect methods  */
+type connect    = (...args: any[]) => any
+type disconnect = (...args: any[]) => any
+
 /*  Composite Web Audio API AudioNode  */
 export class AudioNodeComposite extends GainNode {
     /*  configured input/output nodes of composed chain  */
@@ -50,16 +54,16 @@ export class AudioNodeComposite extends GainNode {
         if (this._bypass) {
             /*  bypass mode: connect us to targets directly  */
             for (const _target of this._targets)
-                (super.connect as (...args: any[]) => any)(..._target)
+                (super.connect as connect)(..._target)
         }
         else {
             /*  regular mode: connect us to to targets via input/output nodes  */
             for (const _target of this._targets) {
-                (super.disconnect as (...args: any[]) => any)(..._target);
-                (this.output.connect as (...args: any[]) => any)(..._target)
+                (super.disconnect as disconnect)(..._target);
+                (this.output.connect as connect)(..._target)
             }
             if (this.input.numberOfInputs > 0)
-                (super.connect as (...args: any[]) => any)(this.input)
+                (super.connect as connect)(this.input)
         }
     }
 
@@ -71,9 +75,9 @@ export class AudioNodeComposite extends GainNode {
         /*  connect us to target node  */
         let result: any
         if (this._bypass || this.output === null)
-            result = (super.connect as (...args: any[]) => any)(...args)
+            result = (super.connect as connect)(...args)
         else
-            result = (this.output.connect as (...args: any[]) => any)(...args)
+            result = (this.output.connect as connect)(...args)
         return result
     }
 
@@ -82,9 +86,9 @@ export class AudioNodeComposite extends GainNode {
         /*  disconnect us from target node  */
         let result: any
         if (this._bypass || this.output === null)
-            result = (super.disconnect as (...args: any[]) => any)(...args)
+            result = (super.disconnect as disconnect)(...args)
         else
-            result = (this.output.disconnect as (...args: any[]) => any)(...args)
+            result = (this.output.disconnect as disconnect)(...args)
 
         /*  untrack target  */
         this._targets = this._targets.filter((_target: any[]) => {
@@ -110,22 +114,22 @@ export class AudioNodeComposite extends GainNode {
         if (this._bypass) {
             /*  bypass mode: connect us to targets directly  */
             if (this.input !== null && this.input.numberOfInputs > 0)
-                (super.disconnect as (...args: any[]) => any)(this.input)
+                (super.disconnect as disconnect)(this.input)
             for (const _target of this._targets) {
                 if (this.output !== null)
-                    (this.output.disconnect as (...args: any[]) => any)(..._target);
-                (super.connect as (...args: any[]) => any)(..._target)
+                    (this.output.disconnect as disconnect)(..._target);
+                (super.connect as connect)(..._target)
             }
         }
         else {
             /*  regular mode: connect us to to targets via input/output nodes  */
             for (const _target of this._targets) {
-                (super.disconnect as (...args: any[]) => any)(..._target)
+                (super.disconnect as disconnect)(..._target)
                 if (this.output !== null)
-                    (this.output.connect as (...args: any[]) => any)(..._target)
+                    (this.output.connect as connect)(..._target)
             }
             if (this.input !== null && this.input.numberOfInputs > 0)
-                (super.connect as (...args: any[]) => any)(this.input)
+                (super.connect as connect)(this.input)
         }
     }
 
