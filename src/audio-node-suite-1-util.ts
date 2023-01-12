@@ -30,13 +30,6 @@ export const dBFSToGain = (dbfs: number) =>
 export const gainTodBFS = (gain: number) =>
     20 * Math.log10(gain)
 
-/*  get the value at a certain frequency in a bucket of frequencies (as returned by "getFloatFrequencyData"  */
-export const getFrequencyValue = (ctx: AudioContext, freq: number, buckets: Float32Array) => {
-    const nyquist = ctx.sampleRate / 2
-    const index   = Math.round(freq / nyquist * buckets.length)
-    return buckets[index]
-}
-
 /*  ensure a value is within min/max boundaries  */
 export const ensureWithin = (val: number, min: number, max: number) => {
     if (val < min)
