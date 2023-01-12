@@ -23,7 +23,7 @@ classes:
   a custom composite/wrapping `AudioNode` class. It is used internally
   and can be also used for creating your own custom composite/wrapping
   `AudioNode`. As an additional goodie, the class provides a useful
-  `bypass()` method for temporarily bypassing the effect of the
+  "by-pass" functionality for temporarily by-passing the effect of the
   underlying `AudioNode` instances.
 
 - `AudioNodeNoise`: this is a white or pink noise generator which
