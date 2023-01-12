@@ -29,7 +29,7 @@ export default Vite.defineConfig(({ command, mode }) => ({
     appType: "custom",
     build: {
         outDir: "lib",
-        minify: !(mode === "development"),
+        minify: false,
         target: "es2022",
         sourcemap: (mode === "development"),
         lib: {
