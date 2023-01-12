@@ -26,10 +26,12 @@
 import { AudioNodeComposite } from "./audio-node-suite-2-composite.js"
 
 /*  custom AudioNode: parametric equalizer  */
-export class AudioNodeEqualizer {
+export class AudioNodeEqualizer extends AudioNodeComposite {
     /* global BiquadFilterType */
     constructor (context: AudioContext, params: { bands?:
         Array<{ type?: BiquadFilterType, freq?: number, q?: number, gain?: number }> } = {}) {
+        super(context)
+
         /*  provide parameter defaults  */
         params.bands ??= []
 
@@ -62,9 +64,9 @@ export class AudioNodeEqualizer {
 
         /*  create result node  */
         if (params.bands.length === 1)
-            return new AudioNodeComposite(bands[0])
+            this.chain(bands[0])
         else
-            return new AudioNodeComposite(bands[0], bands[bands.length - 1])
+            this.chain(bands[0], bands[bands.length - 1])
     }
 }
 

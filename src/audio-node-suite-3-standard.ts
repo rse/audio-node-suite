@@ -27,25 +27,29 @@ import { dBFSToGain }         from "./audio-node-suite-1-util.js"
 import { AudioNodeComposite } from "./audio-node-suite-2-composite.js"
 
 /*  custom AudioNode: silence  */
-export class AudioNodeSilence {
+export class AudioNodeSilence extends AudioNodeComposite {
     constructor (context: AudioContext, params: { channels?: number } = {}) {
+        super(context)
+
         /*  provide parameter defaults  */
         params.channels ??= 1
 
-        /*  create underlying BufferSource node  */
+        /*  configure the underlying BufferSource node  */
         const bs = context.createBufferSource()
+        bs.channelCount = params.channels
         bs.buffer = null
         bs.loop = true
         bs.start(0)
 
-        /*  return convenient composite  */
-        return (new AudioNodeComposite(bs) as unknown as AudioNodeSilence)
+        this.chain(bs)
     }
 }
 
 /*  custom AudioNode: noise  */
-export class AudioNodeNoise {
+export class AudioNodeNoise extends AudioNodeComposite {
     constructor (context: AudioContext, params: { type?: string, channels?: number } = {}) {
+        super(context)
+
         /*  provide parameter defaults  */
         params.type     ??= "pink"
         params.channels ??= 1
@@ -104,63 +108,53 @@ export class AudioNodeNoise {
 
         /*  create underlying BufferSource node  */
         const bs = context.createBufferSource()
+        bs.channelCount = params.channels
         bs.buffer = buffer
         bs.loop = true
         bs.start(0)
-
-        /*  return convenient composite  */
-        return (new AudioNodeComposite(bs) as unknown as AudioNodeNoise)
+        this.chain(bs)
     }
 }
 
 /*  custom AudioNode: mute  */
-export class AudioNodeMute {
-    declare public mute:  (mute: boolean, ms?: number) => void
-    declare public muted: () => boolean
+export class AudioNodeMute extends AudioNodeComposite {
     constructor (context: AudioContext, params: { muted?: boolean } = {}) {
+        super(context)
+
         /*  provide parameter defaults  */
         params.muted ??= false
 
         /*  create and configure underlying Gain node  */
-        const gain = context.createGain()
-        gain.gain.setValueAtTime(params.muted ? 0.0 : 1.0, context.currentTime)
-
-        /*  create and return convenient composite  */
-        const node = (new AudioNodeComposite(gain) as unknown as AudioNodeMute)
-        node.mute = (_mute: boolean, ms = 10) => {
-            const value = _mute ? 0.0 : 1.0
-            console.log("FUCK", _mute, value)
-            gain.gain.linearRampToValueAtTime(value, context.currentTime + ms / 1000)
-        }
-        return node
+        this.gain.setValueAtTime(params.muted ? 0.0 : 1.0, this.context.currentTime)
+    }
+    mute (_mute: boolean, ms = 10) {
+        const value = _mute ? 0.0 : 1.0
+        this.gain.linearRampToValueAtTime(value, this.context.currentTime + ms / 1000)
     }
 }
 
 /*  custom AudioNode: gain  */
-export class AudioNodeGain {
-    declare public adjustGainDecibel: (db: number, ms: number) => void
+export class AudioNodeGain extends AudioNodeComposite {
     constructor (context: AudioContext, params: { gain?: number } = {}) {
+        super(context)
+
         /*  provide parameter defaults  */
         params.gain ??= 0
 
         /*  create and configure underlying Gain node  */
-        const gain = context.createGain()
-        gain.gain.setValueAtTime(dBFSToGain(params.gain), context.currentTime)
-
-        /*  create and return convenient composite  */
-        const node = (new AudioNodeComposite(gain) as unknown as AudioNodeGain)
-        node.adjustGainDecibel = (db: number, ms = 10) => {
-            ((node as unknown as AudioNodeComposite).input as GainNode)
-                .gain.linearRampToValueAtTime(dBFSToGain(db), context.currentTime + ms / 1000)
-        }
-        return node
+        this.gain.setValueAtTime(dBFSToGain(params.gain), this.context.currentTime)
+    }
+    adjustGainDecibel (db: number, ms = 10) {
+        this.gain.linearRampToValueAtTime(dBFSToGain(db), this.context.currentTime + ms / 1000)
     }
 }
 
 /*  custom AudioNode: compressor  */
-export class AudioNodeCompressor {
+export class AudioNodeCompressor extends AudioNodeComposite {
     constructor (context: AudioContext, params: { threshold?: number, attack?: number,
         release?: number, knee?: number, ratio?: number } = {}) {
+        super(context)
+
         /*  provide parameter defaults  */
         params.threshold ??= -16.0
         params.attack    ??= 0.003
@@ -176,15 +170,17 @@ export class AudioNodeCompressor {
         compressor.attack.setValueAtTime(params.attack, context.currentTime)
         compressor.release.setValueAtTime(params.release, context.currentTime)
 
-        /*  return convenient composite  */
-        return (new AudioNodeComposite(compressor) as unknown as AudioNodeCompressor)
+        /*  configure compressor as sub-chain  */
+        this.chain(compressor)
     }
 }
 
 /*  custom AudioNode: limiter  */
-export class AudioNodeLimiter {
+export class AudioNodeLimiter extends AudioNodeComposite {
     constructor (context: AudioContext, params: { threshold?: number, attack?: number,
         release?: number, knee?: number, ratio?: number } = {}) {
+        super(context)
+
         /*  provide parameter defaults  */
         params.threshold ??= -3.0
         params.attack    ??= 0.001
@@ -200,8 +196,8 @@ export class AudioNodeLimiter {
         limiter.attack.setValueAtTime(params.attack, context.currentTime)
         limiter.release.setValueAtTime(params.release, context.currentTime)
 
-        /*  return convenient composite  */
-        return (new AudioNodeComposite(limiter) as unknown as AudioNodeLimiter)
+        /*  configure limiter as sub-chain  */
+        this.chain(limiter)
     }
 }
 

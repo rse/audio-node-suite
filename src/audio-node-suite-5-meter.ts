@@ -27,7 +27,7 @@ import { gainTodBFS, ensureWithin, weightedAverage } from "./audio-node-suite-1-
 import { AudioNodeComposite }                        from "./audio-node-suite-2-composite.js"
 
 /*  custom AudioNode: meter  */
-export class AudioNodeMeter {
+export class AudioNodeMeter extends AudioNodeComposite {
     declare public dataT: () => Float32Array
     declare public dataF: () => Float32Array
     declare public stat:  () => { peak: number, rms: number, rmsM: number, rmsS: number }
@@ -39,6 +39,8 @@ export class AudioNodeMeter {
         intervalTime?: number,
         intervalCount?: number
     } = {}) {
+        super(context)
+
         /*  provide parameter defaults  */
         params.fftSize                ??= 512
         params.minDecibels            ??= -94
@@ -53,6 +55,7 @@ export class AudioNodeMeter {
         analyser.minDecibels           = params.minDecibels
         analyser.maxDecibels           = params.maxDecibels
         analyser.smoothingTimeConstant = params.smoothingTimeConstant
+        this.chain(analyser)
 
         /*  initialize internal state  */
         const stat = { peak: -Infinity, rms: -Infinity, rmsM: -Infinity, rmsS: -Infinity }
@@ -98,11 +101,9 @@ export class AudioNodeMeter {
         measure()
 
         /*  wrap node into a composite and allow caller to access internals  */
-        const composite = (new AudioNodeComposite(analyser) as unknown as AudioNodeMeter)
-        composite.dataT = () => dataT
-        composite.dataF = () => dataF
-        composite.stat  = () => stat
-        return composite
+        this.dataT = () => dataT
+        this.dataF = () => dataF
+        this.stat  = () => stat
     }
 }
 

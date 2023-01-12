@@ -24,131 +24,120 @@
 
 /*  Composite Web Audio API AudioNode  */
 export class AudioNodeComposite extends GainNode {
-    private _bypass      = false
-    private _connect:    any
-    private _disconnect: any
-    private _targets     = [] as any[]
-    declare public context: BaseAudioContext
-    declare public input:   AudioNode
-    declare public output:  AudioNode
-    declare public bypass:  (bypass: boolean) => void
-    constructor (input: AudioNode, output: AudioNode = input) {
-        super(input.context)
+    /*  configured input/output nodes of composed chain  */
+    public input:  AudioNode | null = null
+    public output: AudioNode | null = null
 
+    /*  internal state  */
+    private _bypass  = false        /*  whether to bypass node  */
+    private _targets = [] as any[]  /*  tracked connected targets  */
+
+    /*  just pass-through construction  */
+    constructor (context: AudioContext) {
+        super(context)
+    }
+
+    /*  configure input/output chain  */
+    chain (input: AudioNode, output: AudioNode = input) {
         /*  require at least a wrapped input node  */
         if (typeof input !== "object" || !(input instanceof AudioNode))
             throw new Error("input has to be a valid AudioNode")
 
-        /*  determine AudioContext via input node  */
-        const context = input.context
+        /*  configure chain  */
+        this.input  = input
+        this.output = output
 
-        /*  use a no-op AudioNode node to represent us  */
-        let node: AudioNodeComposite
-        if (input.numberOfInputs > 0) {
-            node = context.createGain() as unknown as AudioNodeComposite
-            node.connect(input)
+        if (this._bypass) {
+            /*  bypass mode: connect us to targets directly  */
+            for (const _target of this._targets)
+                (super.connect as (...args: any[]) => any)(..._target)
         }
         else {
-            const bs = context.createBufferSource()
-            bs.buffer = null
-            node = bs as unknown as AudioNodeComposite
-        }
-
-        /*  track the connected targets and bypass state  */
-        node._targets = [] as AudioNode[]
-        node._bypass  = false
-
-        /*  provide an overloaded Web API "connect" method  */
-        node._connect = node.connect
-        const connect = (...args: any[]): any => {
-            /*  track target  */
-            node._targets.push(args)
-
-            /*  connect us to target node  */
-            let result: any
-            if (node._bypass) {
-                if (input.numberOfInputs > 0)
-                    result = node._connect(...args)
-                else
-                    result = (input.connect as (...args: any[]) => any)(...args)
+            /*  regular mode: connect us to to targets via input/output nodes  */
+            for (const _target of this._targets) {
+                (super.disconnect as (...args: any[]) => any)(..._target);
+                (this.output.connect as (...args: any[]) => any)(..._target)
             }
-            else
-                result = (output.connect as (...args: any[]) => any)(...args)
-
-            return result
+            if (this.input.numberOfInputs > 0)
+                (super.connect as (...args: any[]) => any)(this.input)
         }
-        node.connect = connect
-
-        /*  provide an overloaded Web API "disconnect" method  */
-        node._disconnect = node.disconnect
-        node.disconnect = (...args: any[]): any => {
-            /*  disconnect us from target node  */
-            let result: any
-            if (node._bypass) {
-                if (input.numberOfInputs > 0)
-                    result = node._disconnect(...args)
-                else
-                    result = (input.connect as (...args: any[]) => any)(...args)
-            }
-            else
-                result = (output.disconnect as (...args: any[]) => any)(...args)
-
-            /*  untrack target  */
-            node._targets = node._targets.filter((_target: any[]) => {
-                if (_target.length !== args.length)
-                    return true
-                for (let i = 0; i < args.length; i++)
-                    if (_target[i] !== args[i])
-                        return true
-                return false
-            })
-
-            return result
-        }
-
-        /*  provide a custom "bypass" method  */
-        node.bypass = (bypass: boolean) => {
-            /*  short-circuit no operations  */
-            if (node._bypass === bypass)
-                return
-
-            /*  take over new state and dispatch according to it  */
-            node._bypass = bypass
-            if (node._bypass) {
-                /*  bypass mode: connect us to targets directly  */
-                if (input.numberOfInputs > 0)
-                    node._disconnect(input)
-                for (const _target of node._targets) {
-                    (output.disconnect as (...args: any[]) => any)(..._target)
-                    node._connect(..._target)
-                }
-            }
-            else {
-                /*  regular mode: connect us to to targets via input/output nodes  */
-                for (const _target of node._targets) {
-                    node._disconnect.apply(null, _target);
-                    (output.connect as (...args: any[]) => any)(..._target)
-                }
-                if (input.numberOfInputs > 0)
-                    node._connect(input)
-            }
-        }
-
-        /*  pass-through input and output nodes  */
-        node.input  = input
-        node.output = output
-
-        /*  return our "AudioNode" representation (instead of ourself)  */
-        return node
     }
 
-    /*  factory for Composite Web Audio API AudioNode  */
-    static factory (nodes: AudioNode[]) {
+    /*  provide an overloaded Web API "connect" method  */
+    connect (...args: any[]): any {
+        /*  track target  */
+        this._targets.push(args)
+
+        /*  connect us to target node  */
+        let result: any
+        if (this._bypass || this.output === null)
+            result = (super.connect as (...args: any[]) => any)(...args)
+        else
+            result = (this.output.connect as (...args: any[]) => any)(...args)
+        return result
+    }
+
+    /*  provide an overloaded Web API "disconnect" method  */
+    disconnect (...args: any[]): any {
+        /*  disconnect us from target node  */
+        let result: any
+        if (this._bypass || this.output === null)
+            result = (super.disconnect as (...args: any[]) => any)(...args)
+        else
+            result = (this.output.disconnect as (...args: any[]) => any)(...args)
+
+        /*  untrack target  */
+        this._targets = this._targets.filter((_target: any[]) => {
+            if (_target.length !== args.length)
+                return true
+            for (let i = 0; i < args.length; i++)
+                if (_target[i] !== args[i])
+                    return true
+            return false
+        })
+
+        return result
+    }
+
+    /*  provide a custom "bypass" method  */
+    bypass (bypass: boolean) {
+        /*  short-circuit no operations  */
+        if (this._bypass === bypass)
+            return
+
+        /*  take over new state and dispatch according to it  */
+        this._bypass = bypass
+        if (this._bypass) {
+            /*  bypass mode: connect us to targets directly  */
+            if (this.input !== null && this.input.numberOfInputs > 0)
+                (super.disconnect as (...args: any[]) => any)(this.input)
+            for (const _target of this._targets) {
+                if (this.output !== null)
+                    (this.output.disconnect as (...args: any[]) => any)(..._target);
+                (super.connect as (...args: any[]) => any)(..._target)
+            }
+        }
+        else {
+            /*  regular mode: connect us to to targets via input/output nodes  */
+            for (const _target of this._targets) {
+                (super.disconnect as (...args: any[]) => any)(..._target)
+                if (this.output !== null)
+                    (this.output.connect as (...args: any[]) => any)(..._target)
+            }
+            if (this.input !== null && this.input.numberOfInputs > 0)
+                (super.connect as (...args: any[]) => any)(this.input)
+        }
+    }
+
+    /*  provide convenient factory method  */
+    static factory (context: AudioContext, nodes: AudioNode[]) {
         if (nodes.length < 1)
             throw new Error("at least one node has to be given")
         for (let i = 0; i < nodes.length - 1; i++)
             nodes[i].connect(nodes[i + 1])
-        return new AudioNodeComposite(nodes[0], nodes[nodes.length - 1])
+        const composite = new AudioNodeComposite(context)
+        composite.chain(nodes[0], nodes[nodes.length - 1])
+        return composite
     }
 }
 

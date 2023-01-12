@@ -40,9 +40,10 @@ import {
 } from "./audio-node-suite-6-gate.js"
 
 /*  custom AudioNode: voice filter  */
-export class AudioNodeVoice {
-    declare public mute: (mute: boolean) => void
-    declare public adjustGainDecibel: (db: number, ms?: number) => void
+export class AudioNodeVoice extends AudioNodeComposite {
+    private _mute: AudioNodeMute
+    private _gain: AudioNodeGain
+    private _compensate = 0
     constructor (context: AudioContext, params: {
         equalizer?:  boolean,  /*  whether to enable equalizer  */
         noisegate?:  boolean,  /*  whether to enable noise gate (expander)  */
@@ -50,6 +51,8 @@ export class AudioNodeVoice {
         limiter?:    boolean,  /*  whether to enable limiter (hard compressor)  */
         gain?:       number    /*  additional decibel to change the gain after processing (default: 0)  */
     } = {}) {
+        super(context)
+
         /*  provide parameter defaults  */
         params.equalizer   ??= true
         params.noisegate   ??= true
@@ -58,12 +61,11 @@ export class AudioNodeVoice {
         params.gain        ??= 0
 
         /*  initialize aggregation input  */
-        const nodes = [] as any[]
-        let compensate = 0
+        const nodes = [] as AudioNode[]
 
         /*  0. create: mute controller  */
-        const mute = new AudioNodeMute(context)
-        nodes.push(mute)
+        this._mute = new AudioNodeMute(context)
+        nodes.push(this._mute)
 
         /*  1. create: cutting equalizer  */
         if (params.equalizer) {
@@ -78,14 +80,12 @@ export class AudioNodeVoice {
                 ]
             })
             nodes.push(cutEQ)
-            /* compensate += 0 */
         }
 
         /*  2. create: noise gate  */
         if (params.noisegate) {
             const gate = new AudioNodeGate(context)
             nodes.push(gate)
-            /* compensate += 0 */
         }
 
         /*  3. create: compressor  */
@@ -98,7 +98,7 @@ export class AudioNodeVoice {
                 ratio:     2
             })
             nodes.push(comp)
-            compensate += -2.0
+            this._compensate += -2.0
         }
 
         /*  4. create: boosting equalizer  */
@@ -110,12 +110,12 @@ export class AudioNodeVoice {
                 ]
             })
             nodes.push(boostEQ)
-            compensate += -1.0
+            this._compensate += -1.0
         }
 
         /*  5. create: gain control  */
-        const gain = new AudioNodeGain(context)
-        nodes.push(gain)
+        this._gain = new AudioNodeGain(context)
+        nodes.push(this._gain)
 
         /*  6. create: limiter  */
         if (params.limiter) {
@@ -127,23 +127,26 @@ export class AudioNodeVoice {
                 ratio:     20
             })
             nodes.push(limiter)
-            compensate += -1.0
+            this._compensate += -1.0
         }
 
-        /*  create composite node  */
-        const composite = AudioNodeComposite.factory(nodes as AudioNode[]) as unknown as AudioNodeVoice
+        /*  configure composite node chain  */
+        for (let i = 0; i < nodes.length - 1; i++)
+            nodes[i].connect(nodes[i + 1])
+        this.chain(nodes[0], nodes[nodes.length - 1])
 
-        /*  provide mute control  */
-        composite.mute = (_mute: boolean) =>
-            mute.mute(_mute)
+        /*  pre-set gain  */
+        this.adjustGainDecibel(params.gain, 0)
+    }
 
-        /*  provide gain adjustment  */
-        composite.adjustGainDecibel = (db, ms = 10) =>
-            gain.adjustGainDecibel(compensate + db, ms)
-        composite.adjustGainDecibel(compensate + params.gain, 0)
+    /*  provide mute control  */
+    mute (mute: boolean) {
+        this._mute.mute(mute)
+    }
 
-        /*  create return a composite node  */
-        return composite
+    /*  provide gain adjustment  */
+    adjustGainDecibel (db: number, ms = 10) {
+        this._gain.adjustGainDecibel(this._compensate + db, ms)
     }
 }
 

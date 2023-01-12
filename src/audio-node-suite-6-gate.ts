@@ -28,7 +28,7 @@ import { AudioNodeComposite } from "./audio-node-suite-2-composite.js"
 import { AudioNodeMeter }     from "./audio-node-suite-5-meter.js"
 
 /*  custom AudioNode: (noise) gate  */
-export class AudioNodeGate {
+export class AudioNodeGate extends AudioNodeComposite {
     constructor (context: AudioContext, params: {
         threshold?:  number, /*  open above threshold (dbFS)  */
         hysteresis?: number, /*  close below threshold+hysteresis (dbFS)  */
@@ -38,6 +38,8 @@ export class AudioNodeGate {
         hold?:       number, /*  time to hold volume after it dropped below threshold+hysteresis (ms)  */
         release?:    number  /*  time to release/clamp-down volume (ms)  */
     } = {}) {
+        super(context)
+
         /*  provide parameter defaults  */
         params.threshold  ??= -45
         params.hysteresis ??= -3
@@ -58,8 +60,8 @@ export class AudioNodeGate {
         })
 
         /*  leverage Gain node for changing the gain  */
-        const gain = context.createGain() as GainNode
-        (meter as unknown as AudioNode).connect(gain)
+        const gain = context.createGain()
+        meter.connect(gain)
 
         /*  continuously control gain  */
         let state = "open"
@@ -144,8 +146,8 @@ export class AudioNodeGate {
         /*  schedule first interval  */
         setTimeout(controlGain, params.interval)
 
-        /*  return compose node  */
-        return (new AudioNodeComposite(meter as unknown as AudioNode, gain)) as unknown as AudioNodeGate
+        /*  configure chain  */
+        this.chain(meter, gain)
     }
 }
 
