@@ -88,7 +88,7 @@ Implementation Notice
 is transpiled to plain JavaScript (ECMAScript 2022) and this way runs
 in all current (as of 2023/Q1) JavaScript environments, of course. To
 support different loader environment, the transpiled output is provided
-in three distinct variants for ESM (ECMAScript 2022), CommonJS (Node)
+in the three distinct variants ESM (ECMAScript 2022), CommonJS (Node)
 and UMD (Legacy Browser).
 
 License
