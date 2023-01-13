@@ -16,7 +16,7 @@
         "url":                              "http://engelschall.com"
     },
     "type":                                 "module",
-    "types":                                "lib/audio-node-suite.d.ts",
+    "types":                                "src/audio-node-suite.d.ts",
     "browser":                              "lib/audio-node-suite.umd.js",
     "main":                                 "lib/audio-node-suite.cjs.js",
     "module":                               "lib/audio-node-suite.es.js",
