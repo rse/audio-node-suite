@@ -47,7 +47,7 @@ export class AudioNodeSilence extends AudioNodeComposite {
 
 /*  custom AudioNode: noise  */
 export class AudioNodeNoise extends AudioNodeComposite {
-    private pink = [] /*  avoid stack overflow  */
+    private pink = [] as Array<Float32Array> /*  avoid stack overflow  */
     constructor (context: AudioContext, params: { type?: string, channels?: number } = {}) {
         super(context)
 
