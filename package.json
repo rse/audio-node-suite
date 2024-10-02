@@ -16,13 +16,13 @@
         "url":                              "http://engelschall.com"
     },
     "type":                                 "module",
-    "types":                                "./src/audio-node-suite.d.mts",
+    "types":                                "./lib/audio-node-suite.d.mts",
     "module":                               "./lib/audio-node-suite.es.mjs",
     "main":                                 "./lib/audio-node-suite.cjs.js",
     "browser":                              "./lib/audio-node-suite.umd.js",
     "exports": {
         ".": {
-            "import":                       { "types": "./src/audio-node-suite.d.mts", "default": "./lib/audio-node-suite.es.mjs" },
+            "import":                       { "types": "./lib/audio-node-suite.d.mts", "default": "./lib/audio-node-suite.es.mjs" },
             "require":                      { "types": "./src/audio-node-suite.d.ts",  "default": "./lib/audio-node-suite.cjs.js" },
             "default":                      { "types": "./src/audio-node-suite.d.ts",  "default": "./lib/audio-node-suite.umd.js" }
         }
