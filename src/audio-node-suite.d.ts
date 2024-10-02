@@ -22,7 +22,7 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-declare module "AudioNodeSuite" {
+declare module "audio-node-suite" {
     /*  Composite `AudioNode` subclass by wrapping the node chain from an
         input node to an output node  */
     export class AudioNodeComposite extends AudioNode {
