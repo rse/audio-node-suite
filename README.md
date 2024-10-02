@@ -94,7 +94,7 @@ and UMD (Legacy Browser).
 License
 -------
 
-Copyright &copy; 2020-2023 Dr. Ralf S. Engelschall &lt;http://engelschall.com&gt;
+Copyright &copy; 2020-2024 Dr. Ralf S. Engelschall &lt;http://engelschall.com&gt;
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
