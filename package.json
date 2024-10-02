@@ -22,9 +22,9 @@
     "module":                               "./lib/audio-node-suite.es.js",
     "exports": {
         ".": {
-            "import":                       "./lib/audio-node-suite.es.js",
-            "require":                      "./lib/audio-node-suite.cjs.js",
-            "default":                      "./lib/audio-node-suite.umd.js"
+            "import":                       { "types": "./src/audio-node-suite.d.ts", "default": "./lib/audio-node-suite.es.js" },
+            "require":                      { "types": "./src/audio-node-suite.d.ts", "default": "./lib/audio-node-suite.cjs.js" },
+            "default":                      { "types": "./src/audio-node-suite.d.ts", "default": "./lib/audio-node-suite.umd.js" }
         }
     },
     "dependencies": {
