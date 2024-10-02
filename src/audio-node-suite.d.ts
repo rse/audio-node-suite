@@ -191,6 +191,15 @@ declare module "audio-node-suite" {
                 horizontal?:            boolean   /*  whether to draw horizontall instead of vertically (default: false)  */
             }
         )
+        draw (
+            canvas: HTMLCanvasElement
+        ): void
+        undraw (
+            canvas: HTMLCanvasElement
+        ): void
+        deactive (
+            deactive: boolean
+        ): void
     }
 
     /*  `AudioNode` for spectrum visualization ("spectrogram" style).  */
@@ -212,6 +221,12 @@ declare module "audio-node-suite" {
                 logarithmic?:           boolean   /*  whether to use logarithmic scale for frequencies (default: true)  */
             }
         )
+        draw (
+            canvas: HTMLCanvasElement
+        ): void
+        undraw (
+            canvas: HTMLCanvasElement
+        ): void
     }
 
     /*  `AudioNode` for opinionated voice filtering.  */
