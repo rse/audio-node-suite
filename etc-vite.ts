@@ -23,10 +23,21 @@
 */
 
 import * as Vite from "vite"
+import { viteStaticCopy } from "vite-plugin-static-copy"
 
 export default Vite.defineConfig(({ command, mode }) => ({
     base: "",
     appType: "custom",
+    plugins: [
+        viteStaticCopy({
+            structured: false,
+            targets: [ {
+                src:    "src/audio-node-suite.d.ts",
+                dest:   "",
+                rename: (fn, ext, p) => "audio-node-suite.d.mts"
+            } ]
+        })
+    ],
     build: {
         outDir: "lib",
         minify: false,
@@ -35,8 +46,12 @@ export default Vite.defineConfig(({ command, mode }) => ({
         lib: {
             name:  "AudioNodeSuite",
             entry: "src/audio-node-suite.ts",
-            formats: [ "es", "umd", "cjs" ],
-            fileName: (format) => `audio-node-suite.${format}.js`
+            formats: [ "es", "cjs", "umd" ],
+            fileName: (format) => {
+                if      (format === "es")  return `audio-node-suite.es.mjs`
+                else if (format === "cjs") return `audio-node-suite.cjs.js`
+                else if (format === "umd") return `audio-node-suite.umd.js`
+            }
         }
     }
 }))
