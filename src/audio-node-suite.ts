@@ -52,7 +52,7 @@ import {
 } from "./audio-node-suite-9-voice.js"
 
 /*  export everything  */
-export default {
+export {
     AudioNodeComposite,
     AudioNodeNoise,
     AudioNodeGain,
