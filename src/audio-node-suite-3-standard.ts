@@ -47,6 +47,7 @@ export class AudioNodeSilence extends AudioNodeComposite {
 
 /*  custom AudioNode: noise  */
 export class AudioNodeNoise extends AudioNodeComposite {
+    private pink = [] /*  avoid stack overflow  */
     constructor (context: AudioContext, params: { type?: string, channels?: number } = {}) {
         super(context)
 
@@ -74,9 +75,8 @@ export class AudioNodeNoise extends AudioNodeComposite {
             /*  phase 1: generate PINK noise.
                 This is based on the approximating algorithm from Paul Kellett.
                 (see https://www.musicdsp.org/en/latest/_downloads/84bf8a1271c6bb0b3c88253c0546ae0f/pink.txt)  */
-            const pink = []
             for (let i = 0; i < params.channels; i++) {
-                pink[i] = new Float32Array(lengthInSamples)
+                this.pink[i] = new Float32Array(lengthInSamples)
                 const b = [ 0, 0, 0, 0, 0, 0, 0 ]
                 for (let j = 0; j < lengthInSamples; j++) {
                     const white = (Math.random() * 2) - 1
@@ -86,7 +86,7 @@ export class AudioNodeNoise extends AudioNodeComposite {
                     b[3] = 0.86650 * b[3] + white * 0.3104856
                     b[4] = 0.55000 * b[4] + white * 0.5329522
                     b[5] = -0.7616 * b[5] - white * 0.0168980
-                    pink[i][j] = b[0] + b[1] + b[2] + b[3] + b[4] + b[5] + b[6] + white * 0.5362
+                    this.pink[i][j] = b[0] + b[1] + b[2] + b[3] + b[4] + b[5] + b[6] + white * 0.5362
                     b[6] = white * 0.115926
                 }
             }
@@ -94,16 +94,28 @@ export class AudioNodeNoise extends AudioNodeComposite {
             /*  phase 2: normalize to +/-1 and prevent positive saturation.  */
             const minA = []
             const maxA = []
-            for (let i = 0; i < pink.length; i++) {
-                minA.push(Math.min(...pink[i]))
-                maxA.push(Math.max(...pink[i]))
+            for (let i = 0; i < this.pink.length; i++) {
+                let min = Number.MAX_VALUE
+                for (let j = 0; j < this.pink[i].length; j++)
+                    if (min > this.pink[i][j])
+                        min = this.pink[i][j]
+                minA.push(min)
+                let max = Number.MIN_VALUE
+                for (let j = 0; j < this.pink[i].length; j++)
+                    if (max < this.pink[i][j])
+                        max = this.pink[i][j]
+                maxA.push(max)
             }
             const min = Math.min(...minA)
             const max = Math.max(...maxA)
             const coefficient = (2147483647 / 2147483648) / Math.max(Math.abs(min), max)
             for (let i = 0; i < params.channels; i++)
                 for (let j = 0; j < lengthInSamples; j++)
-                    buffer.getChannelData(i)[j] = pink[i][j] * coefficient
+                    buffer.getChannelData(i)[j] = this.pink[i][j] * coefficient
+
+            /*  cleanup  */
+            for (let i = 0; i < params.channels; i++)
+                delete this.pink[i]
         }
 
         /*  create underlying BufferSource node  */
