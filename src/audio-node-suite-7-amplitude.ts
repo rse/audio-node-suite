@@ -131,8 +131,8 @@ export class AudioNodeAmplitude extends AudioNodeMeter {
     }
     undraw (canvas: HTMLCanvasElement) {
         this._canvases = this._canvases.filter((c) => c !== canvas)
-        if (this._canvases.length === 0)
-            this._timer!.clear()
+        if (this._canvases.length === 0 && this._timer !== null)
+            this._timer.clear()
     }
 
     /*  allow deactivation control  */
