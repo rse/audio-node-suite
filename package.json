@@ -1,6 +1,6 @@
 {
     "name":                                 "audio-node-suite",
-    "version":                              "1.1.6",
+    "version":                              "1.1.7",
     "description":                          "Audio-Node-Suite -- Web Audio API AudioNode Suite",
     "keywords":                             [ "web", "audio", "api", "audionode", "suite" ],
     "license":                              "MIT",
